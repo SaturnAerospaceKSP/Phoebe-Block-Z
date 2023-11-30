@@ -20,71 +20,66 @@ GLOBAL FUNCTION _STEER_DIRECT { // Replaces directional steer
 }
 
 GLOBAL FUNCTION _RCSCU { // RCS Control Unit
-    parameter _DIR, _STAGE, _TOGGLE.  
+    parameter _DIR, _STAGE, _TOGGLE.
 
-
-    IF _STAGE = "STAGE 1" { // set me an example
-        IF _DIR = "FORE" and _TOGGLE = "on" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 5.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "on" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to -5.
-        } ELSE IF _DIR = "FORE" and _TOGGLE = "off" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "off" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
+    FOR S1 in ship:partstagged(_S1_CGT) {
+        if S1:Modules:CONTAINS("ModuleRCSFX") {
+            local M is S1:Getmodule("ModuleRCSFX").
+            for A in M:ALLACTIONNAMES()
+                IF A:CONTAINS("toggle rcs thrust")
+                IF _STAGE = "STAGE 1" {
+                    IF _DIR = "FORE" and _TOGGLE = "ON" {
+                        M:doaction(a, true).
+                        set ship:control:fore to 5.
+                    } ELSE IF _DIR = "REAR" and _TOGGLE = "ON" {
+                        M:doaction(a, true).
+                        set ship:control:fore to -5.
+                    } ELSE IF _DIR = "FORE" or "REAR" and _TOGGLE = "OFF" {
+                        M:doaction(a, true).
+                        set ship:control:fore to 0.
+                    }  
+                } 
         }
-    } ELSE IF _STAGE = "STAGE 2" {
-        IF _DIR = "FORE" and _TOGGLE = "on" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 5.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "on" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to -5.
-        } ELSE IF _DIR = "FORE" and _TOGGLE = "off" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "off" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
+    } 
+    FOR S2 IN SHIP:PARTSTAGGED(_S2_RCS) {
+        IF S2:MODULES:CONTAINS("ModuleRCSFX") {
+            LOCAL M IS S2:GETMODULE("ModuleRCSFX").
+            FOR A IN M:ALLACTIONNAMES()
+            IF A:CONTAINS("toggle rcs thrust")
+                IF _STAGE = "STAGE 2" {
+                    IF _DIR = "FORE" and _TOGGLE = "ON" {
+                        M:doaction(a, true).
+                        set ship:control:fore to 5.
+                    } ELSE IF _DIR = "REAR" and _TOGGLE = "ON" {
+                        M:doaction(a, true).
+                        set ship:control:fore to -5.
+                    } ELSE IF _DIR = "FORE" or "REAR" and _TOGGLE = "OFF" {
+                        M:doaction(a, true).
+                        set ship:control:fore to 0.
+                    }  
+                } 
         }
-    } ELSE IF _STAGE = "SIDE BOOSTERS" {
-        IF _DIR = "FORE" and _TOGGLE = "on" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 5.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "on" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to -5.
-        } ELSE IF _DIR = "FORE" and _TOGGLE = "off" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "off" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
-        }
-    } ELSE IF _STAGE = "CALYPSO" {
-        // IF _DIR = "FORE" and _TOGGLE = "on" {
-        //     __CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-        //     set ship:control:fore to 5.
-        // } ELSE IF _DIR = "REAR" and _TOGGLE = "on" {
-        //     _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-        //     set ship:control:fore to -5.
-        // } ELSE IF _DIR = "FORE" and _TOGGLE = "off" {
-        //     _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-        //     set ship:control:fore to 0.
-        // } ELSE IF _DIR = "REAR" and _TOGGLE = "off" {
-        //     _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-        //     set ship:control:fore to 0.
-        // }
     }
-
-
-
-
-
+    FOR SB IN SHIP:PARTSTAGGED(_SB_CGT) {
+        IF SB:MODULES:CONTAINS("ModuleRCSFX") {
+            LOCAL M IS SB:GETMODULE("ModuleRCSFX").
+            FOR A IN M:ALLACTIONNAMES()
+            IF A:CONTAINS("toggle rcs thrust")
+                IF _STAGE = "SIDE BOOSTERS" {
+                    IF _DIR = "FORE" and _TOGGLE = "ON" {
+                        M:doaction(a, true).
+                        set ship:control:fore to 5.
+                    } ELSE IF _DIR = "REAR" and _TOGGLE = "ON" {
+                        M:doaction(a, true).
+                        set ship:control:fore to -5.
+                    } ELSE IF _DIR = "FORE" or "REAR" and _TOGGLE = "OFF" {
+                        M:doaction(a, true).
+                        set ship:control:fore to 0.
+                    }  
+                } 
+        }
+    }
+    
 }
 
 GLOBAL FUNCTION _ECUTHROTTLE { // Replaces default throttle
