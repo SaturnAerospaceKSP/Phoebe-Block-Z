@@ -105,6 +105,19 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
         // Phoebe Heavy Side Cores
             // Here
 
+        // Calypso Abort
+            IF ag4 {
+                _ECU("STAGE 1", "Shutdown").
+                _ECU("STAGE 2", "Shutdown").
+
+                IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour"{
+                    _SENDABORTCALYPSO("STAGE 1"). // Tells Calypso to eject
+                }
+                
+                _FLIGHTTERMINATIONSYSTEM("STAGE 1"). // Sends FTS command to stage 1
+                _FLIGHTTERMINATIONSYSTEM("STAGE 2"). // Sends FTS command to stage 2
+            }
+
         // Throttle & Steering
             _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL).
             _ECUTHROTTLE(_THROTTLE_CONTROL). 
@@ -120,14 +133,13 @@ GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate a
 
         _ECU("STAGE 1", "Shutdown"). // Shutdown
         _ECUTHROTTLE(0). // 0% Throttle (Main Engine Cutoff)
+        _STAGE1COMMANDCORE:SENDMESSAGE("Initialise Recovery"). // Sends the command to S1's core to begin recovery (BEFORE SEP)
 
         rcs on. // Turn On RCS ports
         wait 1.5. // Settle Time
 
     // Separation & Core Messages
-        _STAGE1COMMANDCORE:SENDMESSAGE("Initialise Recovery"). // Sends the command to S1's core to begin recovery (BEFORE SEP)
-        _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1
-        
+        _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1 
         _RCSCU("STAGE 2", "FORE", "ON"). // Ullage begin
         wait 3. // Settle Time
 
@@ -176,6 +188,17 @@ GLOBAL FUNCTION _PHASE2_VEHICLEGUIDANCE {
         // Loop Break Scenarios
             IF ship:apoapsis >= _APOGEETARGET and ship:periapsis >= body:atm:height - 10000 {break.}
             // IF ship:apoapsis >= _APOGEETARGET and eta:apoapsis < eta:periapsis and ship:periapsis < body:atm:height {break.}
+
+        // Calypso Abort
+            IF ag4 {
+                _ECU("STAGE 2", "Shutdown").
+
+                IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour"{
+                    _SENDABORTCALYPSO("STAGE 2"). // Tells Calypso to eject
+                }
+                
+                _FLIGHTTERMINATIONSYSTEM("STAGE 2"). // Sends FTS command to stage 2
+            }
 
         // Throttle & Steering
             _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL). // Steer Phoebe

@@ -203,6 +203,10 @@ GLOBAL FUNCTION _ECU { // Engine Control Unit
             _S1_ENG:getmodule("ModuleTundraEngineSwitch"):doaction("Activate Engine", true). 
         } ELSE IF _ECUACTION = "Shutdown" {
             _S1_ENG:getmodule("ModuleTundraEngineSwitch"):doaction("Shutdown Engine", true). 
+        } ELSE IF _ECUACTION = "Next Mode" {
+            _S1_ENG:getmodule("ModuleTundraEngineSwitch"):doaction("Next Engine Mode", true). 
+        } ELSE IF _ECUACTION = "Previous Mode" {
+            _S1_ENG:getmodule("ModuleTundraEngineSwitch"):doaction("Previous Engine Mode", true). 
         }
     } ELSE IF _STAGE = "STAGE 2" {
         IF _ECUACTION = "Startup" {
@@ -218,7 +222,6 @@ GLOBAL FUNCTION _ECU { // Engine Control Unit
         }
     } 
 }
-
 
 
 
@@ -297,9 +300,12 @@ GLOBAL FUNCTION _STRONGBACKACTIONS { // Controls for vehicle strongback
 
     IF _LAUNCHMOUNT = "CCSFS 40" {
         IF _ACTION = "Retract" {
+            IF _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):hasevent("Open Erector").
             _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doevent("Open Erector").
         } ELSE IF _ACTION = "Revert" {
-            _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doevent("Close Erector").
+            IF _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):hasevent("Close Erector") {
+                _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doevent("Close Erector").
+            }
         } ELSE IF _ACTION = "Release" {
             _GND_STRONGBACK:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true).
         } ELSE IF _ACTION = "Start Fueling" {
@@ -374,7 +380,7 @@ GLOBAL FUNCTION _GROUNDSAFEPROCEDURE { // For Aborts & Shutdowns this function c
         _STRONGBACKACTIONS("Start Generator"). // Returns power from strongback
         toggle ag7. // Fuel Dump Valve
         wait 3.
-        shutdown.
+        reboot.
     }
 
     // shutdown.
@@ -452,24 +458,45 @@ GLOBAL FUNCTION _GETVEHICLEFUEL { // Returns fuel and capacity of vehicle
 GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and decides recovery method
     parameter _CURRENTPROPELLANT.
 
-    local _ASDS_PROPELLANT is 1600. // Anything Above 600KM Apogee
+    local _ASDS_PROPELLANT is 1850. // Anything Above 600KM Apogee
     local _RTLS_PROPELLANT is 3125. // 600 KM Max RTLS Apogee
+    local _EXPD_PROPELLANT is 10. // Expended booster
 
-    IF _APOGEETARGET >= 600000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT { // Any orbit above 600km
+    IF _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT { // Any orbit above 600km
         return _ASDS_PROPELLANT.
-    } ELSE IF _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT { // Any orbit under 600km
+    } ELSE IF _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT and _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Any orbit under 600km
         return _RTLS_PROPELLANT.
     } ELSE IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" { // Always ASDS for crew (fuel margin is safe)
         return _ASDS_PROPELLANT.
+    } ELSE IF _APOGEETARGET > 1200000 {
+        return _EXPD_PROPELLANT.
     }
 }
 
 GLOBAL FUNCTION _SENDABORTCALYPSO { // Sends commands to each stage to abort & separates calypso
+    parameter _STAGE.
 
+    // STAGE 1 ABORT
+        IF _STAGE = "STAGE 1" {
+            _CALYPSOCOMMANDCORE:SENDMESSAGE("ABORT ABORT ABORT STAGE 1"). // Ejects Calypso using its own core software
+        }
+        
+    // STAGE 2 ABORT
+        IF _STAGE = "STAGE 2" {
+            _CALYPSOCOMMANDCORE:SENDMESSAGE("ABORT ABORT ABORT STAGE 2"). // Same as stage 1 just different trajectory
+        } 
 }
 
-GLOBAL FUNCTION _FLIGHTTERMINATIONSYSTEM { // FTS System (self destruct)
+GLOBAL FUNCTION _FLIGHTTERMINATIONSYSTEM { // FTS System (self destruct) NEEDS TO BE SECOND WHEN USING CALYPSO
+    parameter _FTS_STAGE.
 
+    IF _FTS_STAGE = "STAGE 1" {
+        _S1_FTS:getmodule("TacselfDestruct"):doaction("Detonate Parent!", true). // Stage 1 tank destroys
+    } ELSE IF _FTS_STAGE = "STAGE 2" {
+        _S2_FTS:getmodule("TacselfDestruct"):doaction("Detonate Parent!", true).
+    } ELSE IF _FTS_STAGE = "SIDE BOOSTERS" {
+        _SB_FTS:getmodule("TacselfDestruct"):doaction("Detonate Parent!", true).
+    }
 }
 
 
