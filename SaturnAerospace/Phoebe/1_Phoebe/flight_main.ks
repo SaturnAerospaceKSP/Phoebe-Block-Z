@@ -8,6 +8,8 @@
 // ------------------------
 
 clearScreen.
+GLOBAL _STEER_TARGET IS ship:facing. // global steering parameter
+GLOBAL _THROTTLE_TARGET IS 0. // global throttle parameter
 _CPUINIT(). // Second Phase - Initialises vehicle on startup
 
 GLOBAL FUNCTION _CPUINIT {
@@ -20,6 +22,7 @@ GLOBAL FUNCTION _CPUINIT {
     set steeringManager:maxstoppingtime to 1. // Max Vehicle Turning Speed
     set steeringManager:rollts to 30. // Max Roll Speed
     set config:ipu to 2000. // CPU speed
+    set kuniverse:defaultloaddistance:flying:unload to 90000. // Unload distance increased for flying objects
 
     _DEFINESETTINGS(). // Defines mission settings and configuration
     _DEFINEPARTS(). // Defines all vehicle parts based on configuration setting 
@@ -79,8 +82,9 @@ GLOBAL FUNCTION _PHOEBEFLIGHTMAIN {
 // ---------------------------------
 
 GLOBAL FUNCTION _PHASE1_TOWERCLEAR { // Liftoff - gravity turn start speed
-    local _VEHICLEUP is facing. // Sets the current facing to a variable
-    _STEER_DIRECT(_VEHICLEUP). // Steers on initial heading & roll & pitch
+    // local _VEHICLEUP is facing. // Sets the current facing to a variable
+
+    lock steering to _STEER_TARGET. // Steers up from the pad
     _ECUTHROTTLE(100). // 100% Throttle
 
     UNTIL ship:verticalSpeed >= _GRAVITYTURN_STARTSPEED {
@@ -105,6 +109,19 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
         // Phoebe Heavy Side Cores
             // Here
 
+        // Calypso Abort
+            IF ag4 {
+                _ECU("STAGE 1", "Shutdown").
+                _ECU("STAGE 2", "Shutdown").
+
+                IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour"{
+                    _SENDABORTCALYPSO("STAGE 1"). // Tells Calypso to eject
+                }
+                
+                _FLIGHTTERMINATIONSYSTEM("STAGE 1"). // Sends FTS command to stage 1
+                _FLIGHTTERMINATIONSYSTEM("STAGE 2"). // Sends FTS command to stage 2
+            }
+
         // Throttle & Steering
             _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL).
             _ECUTHROTTLE(_THROTTLE_CONTROL). 
@@ -120,14 +137,13 @@ GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate a
 
         _ECU("STAGE 1", "Shutdown"). // Shutdown
         _ECUTHROTTLE(0). // 0% Throttle (Main Engine Cutoff)
+        _STAGE1COMMANDCORE:SENDMESSAGE("Initialise Recovery"). // Sends the command to S1's core to begin recovery (BEFORE SEP)
 
         rcs on. // Turn On RCS ports
         wait 1.5. // Settle Time
 
     // Separation & Core Messages
-        _STAGE1COMMANDCORE:SENDMESSAGE("Initialise Recovery"). // Sends the command to S1's core to begin recovery (BEFORE SEP)
-        _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1
-        
+        _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1 
         _RCSCU("STAGE 2", "FORE", "ON"). // Ullage begin
         wait 3. // Settle Time
 
@@ -177,6 +193,17 @@ GLOBAL FUNCTION _PHASE2_VEHICLEGUIDANCE {
             IF ship:apoapsis >= _APOGEETARGET and ship:periapsis >= body:atm:height - 10000 {break.}
             // IF ship:apoapsis >= _APOGEETARGET and eta:apoapsis < eta:periapsis and ship:periapsis < body:atm:height {break.}
 
+        // Calypso Abort
+            IF ag4 {
+                _ECU("STAGE 2", "Shutdown").
+
+                IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour"{
+                    _SENDABORTCALYPSO("STAGE 2"). // Tells Calypso to eject
+                }
+                
+                _FLIGHTTERMINATIONSYSTEM("STAGE 2"). // Sends FTS command to stage 2
+            }
+
         // Throttle & Steering
             _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL). // Steer Phoebe
 
@@ -216,7 +243,8 @@ GLOBAL FUNCTION _PHASE2_ORBITINSERTIONBURN {
 
 GLOBAL FUNCTION _PHASE2_ORBITOPS_CLEANUP {
     IF _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Phoebe Heavy" {
-        _PAYLOADSEPARATION().
+        wait 30. // Time to prepare for separation
+        _PAYLOADSEPARATION(). // Deploys payload / payloads
         _ORBITSHUTDOWNPROCEDURE().
     } ELSE IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" { 
         _CALYPSOCOMMANDCORE:SENDMESSAGE("Calypso In Orbit"). // Sends a message to Calypso to begin its orbital operations

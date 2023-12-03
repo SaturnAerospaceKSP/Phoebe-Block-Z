@@ -20,50 +20,50 @@ GLOBAL FUNCTION _STEER_DIRECT { // Replaces directional steer
 }
 
 GLOBAL FUNCTION _RCSCU { // RCS Control Unit
-    parameter _DIR, _STAGE, _TOGGLE.  
-
+    parameter _DIR is "NO CHANGE", _STAGE is "STAGE 2", _TOGGLE is "none".  
+    // revison 2 simplifies the code and toggles RCS based on what we want, rather than assuming it is either on or off
+    // under revision 0 and revision 1 potentially if you didnt know what state RCS was in, you could do what you arent intending to, i.e turning it off when you want it on]
+    // Also revision 2 allows for the _TOGGLE state to be set directly
 
     IF _STAGE = "STAGE 1" { // set me an example
-        IF _DIR = "FORE" and _TOGGLE = "on" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 5.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "on" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to -5.
-        } ELSE IF _DIR = "FORE" and _TOGGLE = "off" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "off" {
-            _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
+        local _rcsSetValue is 0.
+        IF _DIR = "FORE" {
+            set _rcsSetValue to 1. // can only be from -1 to 1, not to a max of 5
+        } ELSE IF _DIR = "REAR" {
+            set _rcsSetValue to -1.
         }
+        IF NOT(_TOGGLE = "NONE") {
+            _S1_CGT:getmodule("ModuleRCSFX"):setfield("RCS", _TOGGLE = "on").
+        }
+        IF NOT(_DIR = "NO CHANGE") {
+            set ship:control:fore to _rcsSetValue.
+        }
+        
     } ELSE IF _STAGE = "STAGE 2" {
-        IF _DIR = "FORE" and _TOGGLE = "on" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 5.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "on" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to -5.
-        } ELSE IF _DIR = "FORE" and _TOGGLE = "off" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "off" {
-            _S2_RCS:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
+        local _rcsSetValue is 0.
+        IF _DIR = "FORE" {
+            set _rcsSetValue to 1. // can only be from -1 to 1, not to a max of 5
+        } ELSE IF _DIR = "REAR" {
+            set _rcsSetValue to -1.
+        }
+        IF NOT(_TOGGLE = "NONE") {
+            _S2_RCS:getmodule("ModuleRCSFX"):setfield("RCS", _TOGGLE = "on").
+        }
+        IF NOT(_DIR = "NO CHANGE") {
+            set ship:control:fore to _rcsSetValue.
         }
     } ELSE IF _STAGE = "SIDE BOOSTERS" {
-        IF _DIR = "FORE" and _TOGGLE = "on" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 5.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "on" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to -5.
-        } ELSE IF _DIR = "FORE" and _TOGGLE = "off" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
-        } ELSE IF _DIR = "REAR" and _TOGGLE = "off" {
-            _SB_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
-            set ship:control:fore to 0.
+        local _rcsSetValue is 0.
+        IF _DIR = "FORE" {
+            set _rcsSetValue to 1. // can only be from -1 to 1, not to a max of 5
+        } ELSE IF _DIR = "REAR" {
+            set _rcsSetValue to -1.
+        }
+        IF NOT(_TOGGLE = "NONE") {
+            _SB_CGT:getmodule("ModuleRCSFX"):setfield("RCS", _TOGGLE = "on").
+        }
+        IF NOT(_DIR = "NO CHANGE") {
+            set ship:control:fore to _rcsSetValue.
         }
     } ELSE IF _STAGE = "CALYPSO" {
         // IF _DIR = "FORE" and _TOGGLE = "on" {
@@ -79,11 +79,10 @@ GLOBAL FUNCTION _RCSCU { // RCS Control Unit
         //     _S1_CGT:getmodule("ModuleRCSFX"):doaction("toggle rcs thrust", true).
         //     set ship:control:fore to 0.
         // }
+
+        // Calypso RCS having multiple modules causing issues?
+        // Read through dragon methods, could be of use
     }
-
-
-
-
 
 }
 
@@ -99,7 +98,7 @@ GLOBAL FUNCTION _DEPLOYFAIRINGS { // Deploys Vehicle Payload Fairings when able
             IF P:MODULES:CONTAINS("ModuleDecouple") { // If the parts contain the module
                 LOCAL M is P:getmodule("ModuleDecouple"). // Get the module
                 FOR A in M:ALLACTIONNAMES() { // For each action in action names
-                    if A:CONTAINS("Decouple") {M:DOACTION(A, true).} // If the action names contain decoupling, decouple fairings
+                    if A:CONTAINS("Decouple") {M:DOACTION(A, true). set _FAIRINGS_ATTACHED to false.} // If the action names contain decoupling, decouple fairings
                 }
             }
         }
@@ -112,8 +111,21 @@ GLOBAL FUNCTION _DEPLOYCALYPSO { // Separates Calypso from the Second Stage
 
 }
 
-GLOBAL FUNCTION _PAYLOADSEPARATION { // Deploys payload(s) into orbit after flight
+GLOBAL FUNCTION _PAYLOADSEPARATION { // Deploys payload(s) into orbit after flight 
+    IF _FAIRINGS_ATTACHED = false and _PAYLOADCOUNT = 1 {
+        _S2_PLS:getmodule("ModuleDecouple"):doaction("Decouple", true).
+    } ELSE IF _FAIRINGS_ATTACHED = false and _PAYLOADCOUNT > 1 {
+        set _PAYLOADSDEPLOYED to 0.
 
+        until _PAYLOADSDEPLOYED = _PAYLOADCOUNT {
+            stage. // Separates 
+
+            wait 4. // 4 Seconds between each separation
+            set _PAYLOADSDEPLOYED to _PAYLOADSDEPLOYED + 1.
+        }
+    } ELSE {
+        wait until _FAIRINGS_ATTACHED = false.
+    }
 } 
 
 GLOBAL FUNCTION _ORBITSHUTDOWNPROCEDURE { // Shuts down unneccesary things and deorbits S2 if applicable
@@ -160,4 +172,16 @@ GLOBAL FUNCTION _ORBITALVELOCITYAPOGEE {
     local _V is (body:mu * ((2 / (_APOGEE)) - (1 / _SEMIMAJORAXIS))) ^ 0.5.
 
     return _V.
+}
+
+GLOBAL FUNCTION _ORBITALVELOCITY {
+    parameter r1 is apoapsis, r2 is periapsis, r3 is altitude.
+    
+    set r1 to r1+body:radius.
+    set r2 to r2+body:radius.
+    set r3 to r3+body:radius.
+
+    local _a is (r1+r2)/2. // _SEMIMAJORAXIS
+    local __V is (body:mu * ((2 / (r3)) - (1/_a))) ^ 0.5.
+    return __V.
 }

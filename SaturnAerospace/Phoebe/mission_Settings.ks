@@ -9,14 +9,16 @@
 
 GLOBAL _MISSIONSETTINGS IS LEXICON( // Only change this 
     "MISSION NAME", "AHHHH", // Mission name (vessel name)
-    "LAUNCH MOUNT", "KSC 39a", // [KSC 39a] [CCSFS 40] 
+    "LAUNCH MOUNT",  "KSC 39a", // [KSC 39a] [CCSFS 40] 
     "PAYLOAD TYPE", "Calypso Dock", // [Phoebe] [Phoebe Heavy] [Calypso Dock] [Calypso Tour]
+    "TARGET VESSEL", "Bob", // [false] or you can set this to the name of a vessel in quotations "Bob" for example
+    "PAYLOAD COUNT", 1, // How many payloads are required to be separated
     "ROLL", 0, // Phoebe orientation on ascent (recommended not to touch)
     "G FORCE LIMIT", 2.5, // Force limit for ascent [2.5 For Calypso with crew]
 
     "APOGEE", 100, // Highest point of orbit
     "PERIGEE", 100, // Lowest point of orbit
-    "INCLINE", 28 // Targeted inclination
+    "INCLINE", 45 // Targeted inclination
 ).
 
 GLOBAL _COUNTDOWNEVENTS IS LEXICON(

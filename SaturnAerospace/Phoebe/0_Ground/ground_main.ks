@@ -25,7 +25,7 @@ GLOBAL FUNCTION _CPUINIT { // Initialisation of the ground CPU & preparation for
     _DEFINEPARTS(). // Defines all vehicle parts based on configuration setting 
     _STRONGBACKACTIONS("Start Generator"). // Starts power feed to Phoebe
     _STRONGBACKACTIONS("Start Fueling"). // Starts fueling of Phoebe (Stage 1, then Stage 2)
-
+    
     GLOBAL _STAGE2COMMANDCORE is _S2_CPU:getmodule("kOSProcessor"):connection. // Used to send messages to Stage 2 (Main CPU)
     IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
         GLOBAL _CALYPSOCOMMANDCORE is _CC_CPU:getmodule("kOSProcessor"):connection. // Connects directly to Calypso for preparation
@@ -35,24 +35,25 @@ GLOBAL FUNCTION _CPUINIT { // Initialisation of the ground CPU & preparation for
 }
 
 GLOBAL FUNCTION _COUNTDOWNSEQUENCE { // Primary Countdown Function
-    parameter _TMINUS.
+    parameter _TIMETOSTART.
+    set _TMINUSCLOCK to _TIMETOSTART.
 
     until missionTime = 1 {
-        _HOLDCHECKER(_TMINUS). // Continuously Checks for a automatic / manual hold
-        _LAUNCHVALIDITY(_TMINUS). // Repeatedly looks for issues with vehicle and informs MCC
+        _HOLDCHECKER(_TMINUSCLOCK). // Continuously Checks for a automatic / manual hold
+        _LAUNCHVALIDITY(_TMINUSCLOCK). // Repeatedly looks for issues with vehicle and informs MCC
 
-        _COUNTDOWNEVENTSACTION(_TMINUS). // Events for the countdown
+        _COUNTDOWNEVENTSACTION(_TMINUSCLOCK). // Events for the countdown
 
-        print "T-" + _FORMATSECONDS(_TMINUS) + "  " at (1,0). // Prints to the terminal
-        log "T-" + _FORMATSECONDS(_TMINUS) to "0:/Data/mission_Time.txt". // Log T Minus to OBS
+        print "T-" + _FORMATSECONDS(_TMINUSCLOCK) + "       " at (1,0). // Prints to the terminal
+        log "T-" + _FORMATSECONDS(_TMINUSCLOCK) to "0:/Data/mission_Time.txt". // Log T Minus to OBS
 
         IF _BEGINCOUNTTIME > kuniverse:realworldtime { // IF the unix time is in the future, it will use that rather than a normal countdown
-            set _TMINUS to _BEGINCOUNTTIME - kuniverse:realworldtime.
+            set _TMINUSCLOCK to _BEGINCOUNTTIME - kuniverse:realworldtime.
         } ELSE {
-            set _TMINUS to _TMINUS - 1. // Counts down the clock
+            set _TMINUSCLOCK to _TMINUSCLOCK - 1. // Counts down the clock
         }
 
-        GLOBAL _INTERCOMMUNICATIONS_TMINUS is _TMINUS.
+        GLOBAL _INTERCOMMUNICATIONS_TMINUS is _TMINUSCLOCK.
         wait 1. 
     }
 }
