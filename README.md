@@ -3,17 +3,17 @@
 ![Saturn Aerospace Rocket](https://cdn.discordapp.com/attachments/1156113285461069884/1179527821161406565/Screenshot_1146.png?ex=657a1be3&is=6567a6e3&hm=41c9b9b6406c6a9ac0393158af6c7ccd8a2b405773329c4541443e41cb9e8601&)
 
 ## Included In Latest Update:
-### 1.0
-- Pre launch operations (Fueling, Calypso, Hold Code)
-- Vehicle launches with okay accuracy to target orbit
+### 1.1
+- FTS System & Partial Abort for Calypso
+- Vehicle launches with accuracy into your desired orbit, deploying payload
 - Calypso & Regular Phoebe launch types (NO DOCKING / HEAVY CODE YET)
 - Inter Core Communication for vehicle efficiency
 - Mission Settings & Partlist file for user
-### 1.1 (Upcoming)
-- Software for recovery (ASDS / RTLS)
+- Vehicle Recovery (ASDS / RTLS)
+- Optimised Control & Guidance Logic
+### 1.2 (Upcoming)
 - Calypso tourism mission style for Calypso
 - Phoebe Heavy software included
-- Abort software & FTS for Calypso / Phoebe launches
 
 ## User Guide: 
 ### Part Tags
