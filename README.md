@@ -7,13 +7,14 @@
 - FTS System & Partial Abort for Calypso
 - Vehicle launches with accuracy into your desired orbit, deploying payload
 - Calypso & Regular Phoebe launch types (NO DOCKING / HEAVY CODE YET)
-- Inter Core Communication for vehicle efficiency
+- Telemetry Output Visualised
 - Mission Settings & Partlist file for user
 - Vehicle Recovery (ASDS / RTLS)
 - Optimised Control & Guidance Logic
 ### 1.2 (Upcoming)
 - Calypso tourism mission style for Calypso
 - Phoebe Heavy software included
+- Docking with station & deorbit operations
 
 ## User Guide: 
 ### Part Tags
