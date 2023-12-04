@@ -111,14 +111,14 @@ GLOBAL FUNCTION _BOOSTBACKBURN {
     _ECU("STAGE 1", "Next Mode"). // Switches to 3 engines
     _ECUTHROTTLE(100). // 100% Throttle (Boostback Startup)
     
-    UNTIL _DISTANCETOIMPACT < 500 {
+    UNTIL _DISTANCETOIMPACT < 650 {
         _STEERTOLANDINGZONE(_ADJUSTPITCHVAL, _ADJUSTLATOFFSET, _ADJUSTLNGOFFSET).
 
         IF _DISTANCETOIMPACT < 10000 {_ECUTHROTTLE(50).} // 50% Throttle 
         ELSE {_ECUTHROTTLE(100).} // 100% Throttle
     }
 
-    IF _DISTANCETOIMPACT < 600 {
+    IF _DISTANCETOIMPACT < 750 {
         _ECUTHROTTLE(0). // 0% Throttle (Boostback Shutdown)
         _ECU("STAGE 1", "Shutdown").
         wait 1. // Settle Time
