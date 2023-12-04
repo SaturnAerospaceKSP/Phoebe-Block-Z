@@ -15,6 +15,8 @@
 - Calypso tourism mission style for Calypso
 - Phoebe Heavy software included
 - Docking with station & deorbit operations
+- Upgraded Recovery for Stage 1 (Center Core) & Less RCS Usage
+- Overall Improved Optimisation 
 
 ## User Guide: 
 ### Part Tags
