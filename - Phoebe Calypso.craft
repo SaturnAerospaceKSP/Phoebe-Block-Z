@@ -2,7 +2,7 @@ ship = - Phoebe Calypso
 version = 1.12.5
 description = 
 type = VAB
-size = 65.3680725,80.2285309,54.3694839
+size = 65.3680878,80.2285309,54.3695145
 steamPublishedFileId = 0
 persistentId = 1166236571
 rot = 0,0,0,0
@@ -16,7 +16,7 @@ PART
 {
 	part = TE.19.F9.S2.Tank_4293184268
 	partName = Part
-	persistentId = 4285268071
+	persistentId = 2550186581
 	pos = 6.74174316E-06,39.9439201,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = -2.30751471E-06,39.9421196,6.21254003E-07
@@ -284,7 +284,7 @@ PART
 {
 	part = TE.19.F9.S2.Engine_4293172442
 	partName = Part
-	persistentId = 4274526064
+	persistentId = 3970128595
 	pos = 6.74174316E-06,36.1889191,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,-3.75499988,0
@@ -720,7 +720,7 @@ PART
 {
 	part = TE.19.F9.S1.Interstage_4293164572
 	partName = Part
-	persistentId = 4218538149
+	persistentId = 1496767248
 	pos = 6.74174316E-06,33.3489227,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,-6.59499741,0
@@ -1189,8 +1189,8 @@ PART
 {
 	part = TE2.19.F9.CGT_4293122788
 	partName = Part
-	persistentId = 304161743
-	pos = 1.24373639,33.0430756,1.9015104E-05
+	persistentId = 515258147
+	pos = 1.24373734,33.0430756,1.87766855E-05
 	attPos = 0,0,0
 	attPos0 = -1.11758709E-07,-0.305847168,-1.24366343
 	rot = 0,-0.70710665,0,0.707107127
@@ -1353,8 +1353,8 @@ PART
 {
 	part = TE2.19.F9.CGT_4293120744
 	partName = Part
-	persistentId = 2803722849
-	pos = -1.24372292,33.0430756,2.1041662E-05
+	persistentId = 3882622383
+	pos = -1.24372387,33.0430756,2.12800805E-05
 	attPos = 0,0,0
 	attPos0 = 2.23517418E-07,-0.305847168,1.24366343
 	rot = 0,0.707107127,0,0.70710665
@@ -1517,11 +1517,11 @@ PART
 {
 	part = Grid Fin M Titanium_4293040352
 	partName = Part
-	persistentId = 2296702122
-	pos = -0.873839617,33.181797,0.873867869
+	persistentId = 54823271
+	pos = -0.873839676,33.181797,0.873868406
 	attPos = 0,0,0
 	attPos0 = 0.873805821,-0.167123795,0.873805642
-	rot = -0.382683873,0,-0.923879623,0
+	rot = -0.382683963,0,-0.923879623,0
 	attRot = 0.99999994,0,0,0
 	attRot0 = 0.923879564,0,0.382683426,0
 	mir = 1,1,1
@@ -1795,8 +1795,8 @@ PART
 {
 	part = Grid Fin M Titanium_4293039484
 	partName = Part
-	persistentId = 3984540614
-	pos = 0.873854518,33.181797,0.87386632
+	persistentId = 1571093698
+	pos = 0.873855054,33.181797,0.873866379
 	attPos = 0,0,0
 	attPos0 = 0.873805642,-0.167123795,-0.873805642
 	rot = -0.923879862,0,-0.382683247,0
@@ -2061,11 +2061,11 @@ PART
 {
 	part = Grid Fin M Titanium_4293039412
 	partName = Part
-	persistentId = 3907346722
-	pos = 0.873853087,33.181797,-0.873828053
+	persistentId = 3701119205
+	pos = 0.873853147,33.181797,-0.87382859
 	attPos = 0,0,0
 	attPos0 = -0.873805881,-0.167123795,-0.873805642
-	rot = -0.923879623,0,0.382683873,0
+	rot = -0.923879623,0,0.382683963,0
 	attRot = 0.99999994,0,0,0
 	attRot0 = 0.382683396,0,-0.923879564,0
 	mir = 1,1,1
@@ -2327,8 +2327,8 @@ PART
 {
 	part = Grid Fin M Titanium_4293039340
 	partName = Part
-	persistentId = 213673847
-	pos = -0.873841226,33.181797,-0.873826444
+	persistentId = 2865840035
+	pos = -0.873841763,33.181797,-0.873826504
 	attPos = 0,0,0
 	attPos0 = -0.873805523,-0.167123795,0.873805821
 	rot = -0.382683247,0,0.923879862,0
@@ -2593,8 +2593,8 @@ PART
 {
 	part = TE2.19.F9.CGT_4292585588
 	partName = Part
-	persistentId = 4086955281
-	pos = -1.24559772,37.3792953,2.05648248E-05
+	persistentId = 2978554665
+	pos = -1.24559867,37.3792953,2.08032434E-05
 	attPos = 0,0,0
 	attPos0 = 2.98023366E-08,-2.56462479,1.24554145
 	rot = 3.45499768E-10,-0.707107127,-3.4549999E-10,-0.70710665
@@ -2756,8 +2756,8 @@ PART
 {
 	part = TE2.19.F9.CGT_4292585354
 	partName = Part
-	persistentId = 4126988582
-	pos = 1.24561131,37.3792953,1.92535226E-05
+	persistentId = 3830794218
+	pos = 1.24561226,37.3792953,1.9015104E-05
 	attPos = 0,0,0
 	attPos0 = -1.37835769E-07,-2.56462479,-1.24554145
 	rot = -3.4549999E-10,-0.70710665,-3.45499768E-10,0.707107127
@@ -2919,8 +2919,8 @@ PART
 {
 	part = ReleaseValve_4293012716
 	partName = Part
-	persistentId = 582432497
-	pos = -1.24286008,38.3214264,2.08032434E-05
+	persistentId = 4019765622
+	pos = -1.24286103,38.3214264,2.1041662E-05
 	attPos = 0,0,0
 	attPos0 = 2.477571E-07,-1.62249374,1.24282122
 	rot = -3.56956159E-10,-0.707107127,3.5695627E-10,-0.70710665
@@ -3107,7 +3107,7 @@ PART
 {
 	part = TE.19.C.Dragon.Decoupler_4292546384
 	partName = Part
-	persistentId = 3919380971
+	persistentId = 160869837
 	pos = 6.74174316E-06,42.9892006,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,3.04528046,0
@@ -3419,7 +3419,7 @@ PART
 {
 	part = TE.18.DRAGONV2.TRUNK_4291726742
 	partName = Part
-	persistentId = 2052740639
+	persistentId = 1403621591
 	pos = 6.74174316E-06,44.5310593,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,1.54185867,0
@@ -3718,7 +3718,7 @@ PART
 {
 	part = TE.18.DRAGONV2.HEATSHIELD_4291724218
 	partName = Part
-	persistentId = 1446777407
+	persistentId = 3533437284
 	pos = 6.74174316E-06,45.7490616,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,1.21800232,0
@@ -3919,7 +3919,7 @@ PART
 {
 	part = TE.18.DRAGONV2.POD_4291721650
 	partName = Part
-	persistentId = 706959577
+	persistentId = 165834888
 	pos = 6.74174316E-06,46.9405632,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 6.74174316E-06,46.9405632,1.99687784E-05
@@ -4607,8 +4607,8 @@ PART
 {
 	part = TE.CD2.POD.MAINS_4291691236
 	partName = Part
-	persistentId = 751798314
-	pos = -0.543022335,47.508606,2.01475923E-05
+	persistentId = 556549499
+	pos = -0.543022454,47.508606,2.01475923E-05
 	attPos = 0,0,0
 	attPos0 = -1.19209361E-07,0.568042755,-0.543001115
 	rot = 0,0.707106829,0,0.707106829
@@ -4833,7 +4833,7 @@ PART
 {
 	part = TE.CD2.POD.DROGUES_4291689454
 	partName = Part
-	persistentId = 1223633150
+	persistentId = 2867847002
 	pos = 6.48624018E-06,46.9405632,2.01347011E-05
 	attPos = 0,0,0
 	attPos0 = -1.65914287E-07,0,-2.5548519E-07
@@ -5026,7 +5026,7 @@ PART
 {
 	part = B10.NDS_4291661486
 	partName = Part
-	persistentId = 3083016675
+	persistentId = 1037780770
 	pos = 6.74174316E-06,48.1155624,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,1.17499924,0
@@ -5365,8 +5365,8 @@ PART
 {
 	part = kOSMachineRad_4293122782
 	partName = Part
-	persistentId = 3332557322
-	pos = -0.269040555,42.8634071,0.466025442
+	persistentId = 3924169442
+	pos = -0.269040495,42.8634071,0.466025621
 	attPos = 0,0,0
 	attPos0 = 0.465996414,2.919487,0.269043148
 	rot = -0.500000119,0.500000119,0.500000238,-0.500000238
@@ -5593,8 +5593,8 @@ PART
 {
 	part = TacSelfDestruct_4293264144
 	partName = Part
-	persistentId = 202084830
-	pos = 0.201928288,42.9258957,0.753600419
+	persistentId = 3581292074
+	pos = 0.201928586,42.9258957,0.753600657
 	attPos = 0,0,0
 	attPos0 = 0.753569126,2.98197556,-0.201918185
 	rot = -0.707106948,-8.94069672E-08,8.94069672E-08,-0.707106948
@@ -5742,8 +5742,8 @@ PART
 {
 	part = kOSMachineRad_4292930796
 	partName = Part
-	persistentId = 3353544893
-	pos = 6.3841153E-06,46.5252609,-1.13488126
+	persistentId = 765018968
+	pos = 6.3841153E-06,46.5252609,-1.1348815
 	attPos = -0.0327677727,-0.00878143311,0
 	attPos0 = 1.13488388,-0.415302277,-2.38418579E-07
 	rot = -0.0923348963,0.701052189,0.0923349261,-0.701052427
@@ -5970,8 +5970,8 @@ PART
 {
 	part = KAL9000_4292871602
 	partName = Part
-	persistentId = 955470818
-	pos = 6.3841153E-06,46.0890617,-1.26370299
+	persistentId = 1140652185
+	pos = 6.3841153E-06,46.0890617,-1.26370323
 	attPos = 0,0,0
 	attPos0 = 1.26370561,-0.851501465,-2.38418579E-07
 	rot = -0.0923348963,0.701052189,0.0923349261,-0.701052427
@@ -6277,7 +6277,7 @@ PART
 {
 	part = TE.19.F9.S1.Tank_4293148234
 	partName = Part
-	persistentId = 2219874656
+	persistentId = 3365779017
 	pos = 6.74174316E-06,19.8911934,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,-13.4577293,0
@@ -6574,8 +6574,8 @@ PART
 {
 	part = KRE-FalconLegMk2-M_4293065990
 	partName = Part
-	persistentId = 692284303
-	pos = 0.696529686,5.72975922,-0.69650352
+	persistentId = 400465135
+	pos = 0.696530044,5.72975922,-0.696503878
 	attPos = 0,0,0
 	attPos0 = -0.696501076,-14.1614332,-0.696501076
 	rot = 0,0.382683307,0,-0.923879743
@@ -6792,8 +6792,8 @@ PART
 {
 	part = KRE-FalconLegMk2-M_4293063322
 	partName = Part
-	persistentId = 332291398
-	pos = -0.696516633,5.72975922,-0.696503103
+	persistentId = 3066557046
+	pos = -0.696516991,5.72975922,-0.69650346
 	attPos = 0,0,0
 	attPos0 = -0.696501076,-14.1614332,0.696501017
 	rot = 0,-0.382683635,0,-0.923879743
@@ -7010,8 +7010,8 @@ PART
 {
 	part = KRE-FalconLegMk2-M_4293063136
 	partName = Part
-	persistentId = 3916234365
-	pos = -0.696516097,5.72975922,0.696543336
+	persistentId = 2105726063
+	pos = -0.696516454,5.72975922,0.696543694
 	attPos = 0,0,0
 	attPos0 = 0.696501136,-14.1614332,0.696501017
 	rot = 0,-0.923879743,0,-0.382683307
@@ -7228,8 +7228,8 @@ PART
 {
 	part = KRE-FalconLegMk2-M_4293062950
 	partName = Part
-	persistentId = 545309407
-	pos = 0.696530104,5.72975922,0.696542799
+	persistentId = 2109668076
+	pos = 0.696530461,5.72975922,0.696543157
 	attPos = 0,0,0
 	attPos0 = 0.696501017,-14.1614332,-0.696501076
 	rot = 0,-0.923879743,0,0.382683635
@@ -7446,8 +7446,8 @@ PART
 {
 	part = kOSMachineRad_4292932512
 	partName = Part
-	persistentId = 1331473378
-	pos = 1.07361042,32.5959816,-0.619821608
+	persistentId = 4017434569
+	pos = 1.07361114,32.5959816,-0.619821966
 	attPos = 0,0,0
 	attPos0 = -0.619819462,12.7047901,-1.07356048
 	rot = 0,0.965926051,0,-0.258819133
@@ -7674,8 +7674,8 @@ PART
 {
 	part = fuelLine_4291823530
 	partName = CompoundPart
-	persistentId = 3310440790
-	pos = -1.24494946,31.350544,2.03264062E-05
+	persistentId = 2410060643
+	pos = -1.24495089,31.350544,2.03264062E-05
 	attPos = 0,0,0
 	attPos0 = -4.80512874E-08,11.4593506,1.24489391
 	rot = 2.66453526E-15,0,2.68540248E-08,1.00000024
@@ -7726,10 +7726,10 @@ PART
 	PARTDATA
 	{
 		tgt = 4292818326
-		tpersID = 1271241032
-		pos = -0.926202536,0.0569649227,0.0226917919
-		rot = -1.19394461E-14,-2.10734569E-07,2.91184813E-15,-1.00000155
-		dir = -0.997815728,0.0613694005,0.0244463012
+		tpersID = 2564030173
+		pos = -0.926196575,-0.64768213,0.460000455
+		rot = 0,0,0,1
+		dir = -0.759041548,-0.530792117,0.376982272
 		col = Box
 	}
 	MODULE
@@ -7850,13 +7850,13 @@ PART
 {
 	part = TE.19.F9.S1.Engine_4293142774
 	partName = Part
-	persistentId = 273993169
+	persistentId = 722599926
 	pos = 6.74174316E-06,5.81391907,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,-14.0772743,0
-	rot = 0,1.1920929E-07,0,1.00000024
-	attRot = 0,0,0,1
-	attRot0 = 0,0.707106829,0,0.707106829
+	rot = 0,0.707106829,0,-0.707106948
+	attRot = 0,0.707106829,0,-0.707106829
+	attRot0 = 0,0,0,-1
 	mir = 1,1,1
 	symMethod = Radial
 	autostrutMode = Heaviest
@@ -8525,15 +8525,1129 @@ PART
 }
 PART
 {
+	part = ReleaseValve_4293012240
+	partName = Part
+	persistentId = 348587256
+	pos = 1.24567115,32.69627,1.97303598E-05
+	attPos = 0,0,0
+	attPos0 = 1.55950204E-07,12.8050766,-1.24561679
+	rot = 3.94579092E-10,0.707106948,3.94579092E-10,-0.707106829
+	attRot = 0,0,0,1
+	attRot0 = 5.58018964E-10,2.08616285E-07,6.6867322E-17,-1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 3
+	resPri = 0
+	dstg = 4
+	sidx = -1
+	sqor = -1
+	sepI = 3
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,Collider,0|0|0,0|0|-1,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleResourceDrain
+		isEnabled = True
+		resourceName = 
+		drainRate = 1
+		isDraining = False
+		flowMode = False
+		stagingEnabled = True
+		resourcesToRelease = LiquidFuel,Oxidizer
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			StartResourceDrainAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			StopResourceDrainAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			ToggleResourceDrainAction
+			{
+				actionGroup = Custom07
+				wasActiveBeforePartWasAdjusted = False
+			}
+			ToggleResourceDrainFlowAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		AXISGROUPS
+		{
+			drainRate
+			{
+				axisGroup = None
+				axisIncremental = Pitch, Yaw, Roll, TranslateX, TranslateY, TranslateZ, WheelSteer, WheelThrottle, Custom01, Custom02, Custom03, Custom04
+				axisSpeedMultiplier = 0
+				axisInverted = None
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleCargoPart
+		isEnabled = True
+		beingAttached = False
+		beingSettled = False
+		reinitResourcesOnStoreInVessel = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModulePartVariants
+		isEnabled = True
+		useVariantMass = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = TacSelfDestruct_4293271266
+	partName = Part
+	persistentId = 2064326448
+	pos = -0.233259112,33.0037422,-0.870549619
+	attPos = 0,0,0
+	attPos0 = -0.870557189,13.1125488,0.233264863
+	rot = -0.481346428,-0.114110768,0.0633704811,-0.866757751
+	attRot = 0,0,0,1
+	attRot0 = -0.295553684,-0.693578601,0.385172993,-0.532201648
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 0
+	resPri = 0
+	dstg = 4
+	sidx = 4
+	sqor = 0
+	sepI = 3
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,TE_23_F9_S1_Tank_Cap_12A,0|0|0.0625,0|0|-0.25,0|0|0.0625
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = TacSelfDestruct
+		isEnabled = True
+		timeDelay = 1
+		canStage = False
+		stagingMode = 0
+		showCountdown = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ExplodeAllAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			ExplodeParentAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			ExplodeAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleTestSubject
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = S1_FTS
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = fuelLine_4291820174
+	partName = CompoundPart
+	persistentId = 1215482661
+	pos = -1.24760902,37.774334,2.03264062E-05
+	attPos = 0,0,0
+	attPos0 = -5.35872914E-07,-2.16958618,1.24761379
+	rot = -5.55111512E-17,-1.1920929E-07,4.71394257E-10,1.00000024
+	attRot = 0,0,0,1
+	attRot0 = -3.33325867E-10,-0.707106709,-3.33325978E-10,-0.707106948
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 2
+	sidx = -1
+	sqor = -1
+	sepI = 1
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S2.Tank_4293184268,TE_23_F9_S2_Tank_1,0|0|0,1|0|0,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		DisconnectAction
+		{
+			actionGroup = Custom05
+			wasActiveBeforePartWasAdjusted = False
+		}
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+		tgt = 4292818326
+		tpersID = 2564030173
+		pos = -0.923538327,-0.663936615,0.455525458
+		rot = 0,0,0,1
+		dir = -0.753754854,-0.541878164,0.371781796
+		col = Box
+	}
+	MODULE
+	{
+		name = CModuleFuelLine
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleCargoPart
+		isEnabled = True
+		beingAttached = False
+		beingSettled = False
+		reinitResourcesOnStoreInVessel = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleRestockLinkedMesh
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModulePartVariants
+		isEnabled = True
+		useVariantMass = True
+		stagingEnabled = True
+		selectedVariant = White
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = tinyvent_4291907006
+	partName = Part
+	persistentId = 2794773520
+	pos = 1.24523377,30.2542439,2.02071969E-05
+	attPos = 0,0,0
+	attPos0 = 6.54512917E-07,10.3630505,-1.24522614
+	rot = 1.37783362E-09,1.00000024,1.11022302E-16,1.78813934E-07
+	attRot = 0,0,0,1
+	attRot0 = 9.74275327E-10,0.707107008,-9.74274883E-10,-0.70710665
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 3
+	resPri = 0
+	dstg = 4
+	sidx = -1
+	sqor = -1
+	sepI = 3
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,Collider,0|0|0,0.25|0|0,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = makeSteam
+		isEnabled = True
+		alwaysOn = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ToggleSteamAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = tinyvent_4291906700
+	partName = Part
+	persistentId = 2737412853
+	pos = 1.24884415,29.4125557,1.99687784E-05
+	attPos = 0,0,0
+	attPos0 = 4.16955061E-07,9.5213623,-1.24883652
+	rot = 1.15219523E-09,1.00000024,0,0
+	attRot = 0,0,0,1
+	attRot0 = 8.14724899E-10,0.707106888,-8.14724677E-10,-0.707106769
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 3
+	resPri = 0
+	dstg = 4
+	sidx = -1
+	sqor = -1
+	sepI = 3
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,Collider,0|0|0,0.25|0|0,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = makeSteam
+		isEnabled = True
+		alwaysOn = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ToggleSteamAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = tinyvent_4291906512
+	partName = Part
+	persistentId = 3627309446
+	pos = 1.24748945,33.338726,1.93727319E-05
+	attPos = 0,0,0
+	attPos0 = 5.79494326E-07,-0.0101966858,-1.2474823
+	rot = 2.81597801E-10,1.00000024,-5.55111512E-17,-1.1920929E-07
+	attRot = 0,0,0,1
+	attRot0 = -1.99119707E-10,-0.707106948,1.99119624E-10,0.707106709
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 3
+	resPri = 0
+	dstg = 4
+	sidx = -1
+	sqor = -1
+	sepI = 3
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S1.Interstage_4293164572,Collider_1,0|0|0,0.25|0|0,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = makeSteam
+		isEnabled = True
+		alwaysOn = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ToggleSteamAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = tinyvent_4291906324
+	partName = Part
+	persistentId = 1390114215
+	pos = 1.24183702,33.6314125,1.91343133E-05
+	attPos = 0,0,0
+	attPos0 = 3.37369698E-07,0.282489777,-1.24182987
+	rot = 3.27940397E-10,1.00000024,-9.71445147E-17,-1.78813934E-07
+	attRot = 0,0,0,1
+	attRot0 = -2.31888841E-10,-0.707106888,2.31888814E-10,0.707106769
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 3
+	resPri = 0
+	dstg = 4
+	sidx = -1
+	sqor = -1
+	sepI = 3
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S1.Interstage_4293164572,Cube,0|0|0,0.25|0|0,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = makeSteam
+		isEnabled = True
+		alwaysOn = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ToggleSteamAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = tinyvent_4291906136
+	partName = Part
+	persistentId = 1421601182
+	pos = 1.24799526,38.4366684,1.97303598E-05
+	attPos = 0,0,0
+	attPos0 = 4.16752812E-07,-1.50725174,-1.2479881
+	rot = 8.34427083E-10,1.00000024,0,0
+	attRot = 0,0,0,1
+	attRot0 = -5.90029026E-10,-0.707106888,5.90028915E-10,0.707106769
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 2
+	sidx = -1
+	sqor = -1
+	sepI = 1
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,TE.19.F9.S2.Tank_4293184268,TE_23_F9_S2_Tank_1,0|0|0,0.25|0|0,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = makeSteam
+		isEnabled = True
+		alwaysOn = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ToggleSteamAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
 	part = 39A.pad_4292818326
 	partName = Part
-	persistentId = 1271241032
-	pos = 6.74174316E-06,5.21616364,1.99687784E-05
+	persistentId = 2564030173
+	pos = 6.74174316E-06,5.21616745,1.99687784E-05
 	attPos = 0,0,0
-	attPos0 = 0,-0.597755432,0
-	rot = 0,-0.707107127,0,-0.70710665
+	attPos0 = 0,-0.597751617,0
+	rot = 0,-0.707107008,0,-0.707106769
 	attRot = 0,-0.707106829,0,-0.70710659
-	attRot0 = 0,-0.707106888,0,-0.70710665
+	attRot0 = 0,1,0,-8.94069601E-08
 	mir = 1,1,1
 	symMethod = Radial
 	autostrutMode = Off
@@ -8806,11 +9920,11 @@ PART
 {
 	part = 39Base_4292534480
 	partName = Part
-	persistentId = 3260379477
-	pos = 6.74174316E-06,1.43392181,1.99687784E-05
+	persistentId = 1239308576
+	pos = 6.74174316E-06,1.43392563,1.99687784E-05
 	attPos = 0,0,0
 	attPos0 = 0,-3.78224182,0
-	rot = 0,-0.707107127,0,-0.70710665
+	rot = 0,-0.707107008,0,-0.707106769
 	attRot = 0,0.707106769,0,0.707106769
 	attRot0 = 0,0,0,1
 	mir = 1,1,1
@@ -9036,11 +10150,11 @@ PART
 {
 	part = FSS_4292530448
 	partName = Part
-	persistentId = 2994772130
-	pos = 1.35330129,1.43392181,20.1471424
+	persistentId = 3167263254
+	pos = 1.35329366,1.43392563,20.1471653
 	attPos = 0,0,0
 	attPos0 = -20.1461887,0,1.35327947
-	rot = 0,0.70710665,0,-0.707107127
+	rot = 0,0.707106769,0,-0.707107008
 	attRot = 0,-0.707106769,0,0.707106769
 	attRot0 = 0,-1,0,0
 	mir = 1,1,1
@@ -9208,11 +10322,11 @@ PART
 {
 	part = kOSMachineRad_4292323750
 	partName = Part
-	persistentId = 207991592
-	pos = 1.57708299,5.2184639,-5.88552475
+	persistentId = 231368898
+	pos = 1.57708776,5.21846771,-5.88553047
 	attPos = 0,0,0
 	attPos0 = 5.88531494,0.00230026245,1.57696533
-	rot = 0.500000358,-0.500000358,0.5,-0.5
+	rot = 0.500000298,-0.500000298,0.50000006,-0.50000006
 	attRot = 0,0,0,1
 	attRot0 = 0,0,-0.707106829,0.707106829
 	mir = 1,1,1
@@ -9430,1119 +10544,5 @@ PART
 		hideFlow = False
 		isVisible = True
 		flowMode = Both
-	}
-}
-PART
-{
-	part = ReleaseValve_4293012240
-	partName = Part
-	persistentId = 538215901
-	pos = 1.24566972,32.69627,1.97303598E-05
-	attPos = 0,0,0
-	attPos0 = 1.55950204E-07,12.8050766,-1.24561679
-	rot = 3.94579092E-10,0.707106948,3.94579092E-10,-0.707106829
-	attRot = 0,0,0,1
-	attRot0 = 5.58018964E-10,2.08616285E-07,6.6867322E-17,-1
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 3
-	resPri = 0
-	dstg = 4
-	sidx = -1
-	sqor = -1
-	sepI = 3
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,Collider,0|0|0,0|0|-1,0|0|0
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = ModuleResourceDrain
-		isEnabled = True
-		resourceName = 
-		drainRate = 1
-		isDraining = False
-		flowMode = False
-		stagingEnabled = True
-		resourcesToRelease = LiquidFuel,Oxidizer
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-			StartResourceDrainAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-			StopResourceDrainAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-			ToggleResourceDrainAction
-			{
-				actionGroup = Custom07
-				wasActiveBeforePartWasAdjusted = False
-			}
-			ToggleResourceDrainFlowAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-		}
-		AXISGROUPS
-		{
-			drainRate
-			{
-				axisGroup = None
-				axisIncremental = Pitch, Yaw, Roll, TranslateX, TranslateY, TranslateZ, WheelSteer, WheelThrottle, Custom01, Custom02, Custom03, Custom04
-				axisSpeedMultiplier = 0
-				axisInverted = None
-			}
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ModuleCargoPart
-		isEnabled = True
-		beingAttached = False
-		beingSettled = False
-		reinitResourcesOnStoreInVessel = False
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = 
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ModulePartVariants
-		isEnabled = True
-		useVariantMass = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-}
-PART
-{
-	part = TacSelfDestruct_4293271266
-	partName = Part
-	persistentId = 1083096881
-	pos = -0.233258873,33.0037422,-0.870548904
-	attPos = 0,0,0
-	attPos0 = -0.870557189,13.1125488,0.233264863
-	rot = -0.481346428,-0.114110768,0.0633704811,-0.866757751
-	attRot = 0,0,0,1
-	attRot0 = -0.295553684,-0.693578601,0.385172993,-0.532201648
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 0
-	resPri = 0
-	dstg = 4
-	sidx = 4
-	sqor = 0
-	sepI = 3
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,TE_23_F9_S1_Tank_Cap_12A,0|0|0.0625,0|0|-0.25,0|0|0.0625
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = TacSelfDestruct
-		isEnabled = True
-		timeDelay = 1
-		canStage = False
-		stagingMode = 0
-		showCountdown = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-			ExplodeAllAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-			ExplodeParentAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-			ExplodeAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ModuleTestSubject
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = S1_FTS
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-}
-PART
-{
-	part = fuelLine_4291820174
-	partName = CompoundPart
-	persistentId = 3572563394
-	pos = -1.24760807,37.774334,2.00879877E-05
-	attPos = 0,0,0
-	attPos0 = -5.35872914E-07,-2.16958618,1.24761379
-	rot = -2.77555756E-17,-1.1920929E-07,4.71394257E-10,1.00000024
-	attRot = 0,0,0,1
-	attRot0 = -3.33325867E-10,-0.707106709,-3.33325978E-10,-0.707106948
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 1
-	resPri = 0
-	dstg = 2
-	sidx = -1
-	sqor = -1
-	sepI = 1
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S2.Tank_4293184268,TE_23_F9_S2_Tank_1,0|0|0,1|0|0,0|0|0
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		DisconnectAction
-		{
-			actionGroup = Custom05
-			wasActiveBeforePartWasAdjusted = False
-		}
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-		tgt = 4292818326
-		tpersID = 1271241032
-		pos = -0.923542023,-0.0494689941,0.00250810455
-		rot = -1.579758E-16,-1.68587462E-07,6.6174449E-24,-1.00000072
-		dir = -0.998564839,-0.0534875467,0.00271184742
-		col = Box
-	}
-	MODULE
-	{
-		name = CModuleFuelLine
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ModuleCargoPart
-		isEnabled = True
-		beingAttached = False
-		beingSettled = False
-		reinitResourcesOnStoreInVessel = False
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ModuleRestockLinkedMesh
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ModulePartVariants
-		isEnabled = True
-		useVariantMass = True
-		stagingEnabled = True
-		selectedVariant = White
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = 
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-}
-PART
-{
-	part = tinyvent_4291907006
-	partName = Part
-	persistentId = 2837798684
-	pos = 1.24523306,30.2542439,2.02071969E-05
-	attPos = 0,0,0
-	attPos0 = 6.54512917E-07,10.3630505,-1.24522614
-	rot = 1.3778334E-09,1.00000024,1.66533454E-16,1.78813934E-07
-	attRot = 0,0,0,1
-	attRot0 = 9.74275327E-10,0.707107008,-9.74274883E-10,-0.70710665
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 3
-	resPri = 0
-	dstg = 4
-	sidx = -1
-	sqor = -1
-	sepI = 3
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,Collider,0|0|0,0.25|0|0,0|0|0
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = makeSteam
-		isEnabled = True
-		alwaysOn = False
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-			ToggleSteamAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = 
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-}
-PART
-{
-	part = tinyvent_4291906700
-	partName = Part
-	persistentId = 4098381025
-	pos = 1.24884343,29.4125557,1.99687784E-05
-	attPos = 0,0,0
-	attPos0 = 4.16955061E-07,9.5213623,-1.24883652
-	rot = 1.15219512E-09,1.00000024,0,0
-	attRot = 0,0,0,1
-	attRot0 = 8.14724899E-10,0.707106888,-8.14724677E-10,-0.707106769
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 3
-	resPri = 0
-	dstg = 4
-	sidx = -1
-	sqor = -1
-	sepI = 3
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S1.Tank_4293148234,Collider,0|0|0,0.25|0|0,0|0|0
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = makeSteam
-		isEnabled = True
-		alwaysOn = False
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-			ToggleSteamAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = 
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-}
-PART
-{
-	part = tinyvent_4291906512
-	partName = Part
-	persistentId = 3707603047
-	pos = 1.24748921,33.338726,1.96111505E-05
-	attPos = 0,0,0
-	attPos0 = 5.79494326E-07,-0.0101966858,-1.2474823
-	rot = 2.81597801E-10,1.00000024,-4.16333634E-17,-1.1920929E-07
-	attRot = 0,0,0,1
-	attRot0 = -1.99119707E-10,-0.707106948,1.99119624E-10,0.707106709
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 3
-	resPri = 0
-	dstg = 4
-	sidx = -1
-	sqor = -1
-	sepI = 3
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S1.Interstage_4293164572,Collider_1,0|0|0,0.25|0|0,0|0|0
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = makeSteam
-		isEnabled = True
-		alwaysOn = False
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-			ToggleSteamAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = 
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-}
-PART
-{
-	part = tinyvent_4291906324
-	partName = Part
-	persistentId = 418770335
-	pos = 1.24183679,33.6314125,1.93727319E-05
-	attPos = 0,0,0
-	attPos0 = 3.37369698E-07,0.282489777,-1.24182987
-	rot = 3.27940397E-10,1.00000024,-6.9388939E-17,-1.78813934E-07
-	attRot = 0,0,0,1
-	attRot0 = -2.31888841E-10,-0.707106888,2.31888814E-10,0.707106769
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 3
-	resPri = 0
-	dstg = 4
-	sidx = -1
-	sqor = -1
-	sepI = 3
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S1.Interstage_4293164572,Cube,0|0|0,0.25|0|0,0|0|0
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = makeSteam
-		isEnabled = True
-		alwaysOn = False
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-			ToggleSteamAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = 
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-}
-PART
-{
-	part = tinyvent_4291906136
-	partName = Part
-	persistentId = 1695230781
-	pos = 1.24799502,38.4366684,1.99687784E-05
-	attPos = 0,0,0
-	attPos0 = 4.16752812E-07,-1.50725174,-1.2479881
-	rot = 8.34427083E-10,1.00000024,0,0
-	attRot = 0,0,0,1
-	attRot0 = -5.90029026E-10,-0.707106888,5.90028915E-10,0.707106769
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = 1
-	resPri = 0
-	dstg = 2
-	sidx = -1
-	sqor = -1
-	sepI = 1
-	attm = 1
-	sameVesselCollision = False
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	srfN = srfAttach,TE.19.F9.S2.Tank_4293184268,TE_23_F9_S2_Tank_1,0|0|0,0.25|0|0,0|0|0
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-		ToggleSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		SetSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-		RemoveSameVesselInteraction
-		{
-			actionGroup = None
-			wasActiveBeforePartWasAdjusted = False
-		}
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = makeSteam
-		isEnabled = True
-		alwaysOn = False
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-			ToggleSteamAction
-			{
-				actionGroup = None
-				wasActiveBeforePartWasAdjusted = False
-			}
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = FMRS_PM
-		isEnabled = True
-		stagingEnabled = True
-		MM_DYNAMIC = true
-		parent_vessel = 0
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = KOSNameTag
-		isEnabled = True
-		nameTag = 
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
-	}
-	MODULE
-	{
-		name = ShipEffectsCollisions
-		isEnabled = True
-		stagingEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-		UPGRADESAPPLIED
-		{
-		}
 	}
 }
