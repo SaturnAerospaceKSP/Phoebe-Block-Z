@@ -473,7 +473,7 @@ GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and de
     parameter _CURRENTPROPELLANT.
 
     local _ASDS_PROPELLANT is 1850. // Anything Above 600KM Apogee
-    local _RTLS_PROPELLANT is 2675. // 600 KM Max RTLS Apogee
+    local _RTLS_PROPELLANT is 2475. // 600 KM Max RTLS Apogee
     local _EXPD_PROPELLANT is 10. // Expended booster
 
     IF _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT { // Any orbit above 600km
