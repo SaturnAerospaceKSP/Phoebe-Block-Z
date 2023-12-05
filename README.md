@@ -25,6 +25,8 @@ You must right click the corresponding part in the VAB and set the kOS nametag t
 
 For ease of use, **2 crafts have been provided with the correct part tags!**
 
+You must also place the folder inside the zip in the "GameData" folder into your Gamedata folder so that you can get the part modules for fueling on the pads. Thank You!
+
 ### Mission Settings
 Then you must configure the mission settings and use the correct launch site, e.g. Tundra pad 40 erector for CCSFS 40 etc.
 Also you will have to choose the correct vehicle configuration for the mission.
