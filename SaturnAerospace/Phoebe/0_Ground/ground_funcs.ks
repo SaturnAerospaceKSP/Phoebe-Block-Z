@@ -305,15 +305,15 @@ GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
     } ELSE IF _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
         _CALYPSOCOMMANDCORE:SENDMESSAGE("Initialise Calypso"). // Sends a command to begin startup on Calypso & Internal Work
     } ELSE IF _CURRENTTIME = _TIME_PHOEBEHEAVYFUELSTART and _VEHICLECONFIG = "Phoebe Heavy" {
-        _STRONGBACKACTIONS("Start Fueling"). // Phoebe Heavy Fueling Procedure takes longer and starts at 35 minutes
+        // _STRONGBACKACTIONS("Start Fueling"). // Phoebe Heavy Fueling Procedure takes longer and starts at 35 minutes
     } ELSE IF _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = not "Phoebe Heavy" { 
-        _STRONGBACKACTIONS("Start Fueling"). // Phoebe / Calypso, starts at 26 minutes
+        // _STRONGBACKACTIONS("Start Fueling"). // Phoebe / Calypso, starts at 26 minutes
     } ELSE IF _CURRENTTIME = _TIME_INTERNALPOWER {
-        _STRONGBACKACTIONS("Stop Generator").
+        // _STRONGBACKACTIONS("Stop Generator").
     } ELSE IF _CURRENTTIME = _TIME_STRONGBACKRETRACT {
         _STRONGBACKACTIONS("Retract").
     } ELSE IF _CURRENTTIME = _TIME_FUELINGCLOSEOUT {
-        _STRONGBACKACTIONS("Stop Fueling").
+        // _STRONGBACKACTIONS("Stop Fueling").
         toggle ag5. // Disconnects the fuel lines from the strongback
     } ELSE IF _CURRENTTIME = _TIME_SIDECOREIGNITE and _VEHICLECONFIG = "Phoebe Heavy" { // Heavy on 39a
         _ECU("SIDE BOOSTERS", "Startup").

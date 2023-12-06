@@ -23,8 +23,8 @@ GLOBAL FUNCTION _CPUINIT { // Initialisation of the ground CPU & preparation for
 
     _DEFINESETTINGS(). // Defines mission settings and configuration
     _DEFINEPARTS(). // Defines all vehicle parts based on configuration setting 
-    _STRONGBACKACTIONS("Start Generator"). // Starts power feed to Phoebe
-    _STRONGBACKACTIONS("Start Fueling"). // Starts fueling of Phoebe (Stage 1, then Stage 2)
+    // _STRONGBACKACTIONS("Start Generator"). // Starts power feed to Phoebe
+    // _STRONGBACKACTIONS("Start Fueling"). // Starts fueling of Phoebe (Stage 1, then Stage 2)
     
     GLOBAL _STAGE2COMMANDCORE is _S2_CPU:getmodule("kOSProcessor"):connection. // Used to send messages to Stage 2 (Main CPU)
     IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
