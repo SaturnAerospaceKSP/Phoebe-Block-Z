@@ -15,7 +15,7 @@ GLOBAL FUNCTION _CPUINIT {
     runOncePath("0:/SaturnAerospace/Phoebe/partlist.ks"). // Part List
     runOncePath("0:/SaturnAerospace/Phoebe/0_Ground/ground_funcs.ks"). // Ground Based Functions
     runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe/flight_funcs.ks"). // Flight Based Functions
-    runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe//Recovery/recovery_funcs.ks"). // Recovery Based Functions
+    runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe/Recovery/recovery_funcs.ks"). // Recovery Based Functions
     runOncePath("0:/SaturnAerospace/Libraries/lazcalc.ks"). // Azimuth Calculations
 
     set steeringManager:maxstoppingtime to 10. // Max Vehicle Turning Speed
@@ -26,8 +26,8 @@ GLOBAL FUNCTION _CPUINIT {
 
     set _ASDS_REENTRYSTART to -775. // (verticalspeed)
     set _ASDS_REENTRYSTOP to -225. // (verticalspeed)
-    set _RTLS_REENTRYSTART to -750. // (verticalspeed)
-    set _RTLS_REENTRYSTOP to -475. // (verticalspeed)
+    set _RTLS_REENTRYSTART to -850. // (verticalspeed)
+    set _RTLS_REENTRYSTOP to -575. // (verticalspeed)
     set _BOOSTER_ALTOFFSET to 30.70. // Vehicle Height (alt radar)
     set _ERRORSCALING to 1. // Error Scale for guidance (declare point)
     set _MAXAOA to 0. // Max Angle Of Attack for guidance (declare point)
@@ -41,6 +41,9 @@ GLOBAL FUNCTION _CPUINIT {
     _DEFINEPARTS(). // Defines all vehicle parts based on configuration setting 
 
     _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")). // Gets fuel for function
+
+    lock steering to facing. // locks straight 
+    wait 3. // waits  a few seconds till s2 is clear
 
     IF _STAGE1OXCURRENT <= _ASDS_MARGIN {wait 5. set _RECOVERYMETHOD to "ASDS". _ASDS_SEQUENCE().} // ASDS Sequence
     ELSE {wait 5. set _RECOVERYMETHOD to "RTLS". _RTLS_SEQUENCE().} // RTLS Sequence
@@ -118,7 +121,11 @@ GLOBAL FUNCTION _BOOSTBACKBURN {
         ELSE {_ECUTHROTTLE(100).} // 100% Throttle
     }
 
-    IF _DISTANCETOIMPACT < 750 {
+    UNTIL _DISTANCETOIMPACT > 2000 { // Waits a little longer for the boostback to go beyond the pad (reentry will fix this)
+        _STEERTOLANDINGZONE(_ADJUSTPITCHVAL, _ADJUSTLATOFFSET, _ADJUSTLNGOFFSET).
+    }
+
+    IF _DISTANCETOIMPACT < 2250 {   
         _ECUTHROTTLE(0). // 0% Throttle (Boostback Shutdown)
         _ECU("STAGE 1", "Shutdown").
         wait 1. // Settle Time
@@ -130,7 +137,10 @@ GLOBAL FUNCTION _COASTPHASE {
     rcs on. // Turns RCS on for maneuvering
     _STEER_DIRECT(up). // Steers up during coast 
 
-    UNTIL SHIP:verticalSpeed < -50 {wait 0.} // Waits until descending
+    set steeringManager:torqueepsilonmax to 0.04.
+    set steeringManager:torqueepsilonmin to 0.008. 
+
+    UNTIL SHIP:verticalSpeed < -100 {wait 0.} // Waits until descending
 
     _DEPLOYGRIDFINS(). // Deploys grid fins    
     _STEER_DIRECT(srfRetrograde). // Points retrograde (surface)
@@ -140,12 +150,12 @@ GLOBAL FUNCTION _REENTRYBURN {
     IF _RECOVERYMETHOD = "ASDS" {
         UNTIL ship:verticalSpeed <= _ASDS_REENTRYSTART {_STEER_DIRECT(srfRetrograde). wait 0.}
 
-        
+        lock steering to _STEERTOLZ().
         set _MAXAOA to -3. // Inverted AOA on entry burn
         _ECU("STAGE 1", "Next Mode"). // 3 Engines for ASDS
+        _ECU("STAGE 1", "Next Mode"). // Single Engine Startup
 
         _ECU("STAGE 1", "Startup"). // Enable Engines
-        _ECU("STAGE 1", "Next Mode"). // Single Engine Startup
         _ECUTHROTTLE(10). // 10% Throttle
         rcs off.
 
@@ -156,11 +166,12 @@ GLOBAL FUNCTION _REENTRYBURN {
         UNTIL ship:verticalSpeed >= _ASDS_REENTRYSTOP {lock steering to _STEERTOLZ(). wait 0.}
 
         _ECUTHROTTLE(0).
-        set _ERRORSCALING to 1.2. // // Increases scaling of guidance
+        set _ERRORSCALING to 1.4. // // Increases scaling of guidance
     } ELSE IF _RECOVERYMETHOD = "RTLS" {
         UNTIL ship:verticalSpeed <= _RTLS_REENTRYSTART {_STEER_DIRECT(srfRetrograde). wait 0.}
 
-        lock steering to srfRetrograde.
+        lock steering to _STEERTOLZ().
+        set _MAXAOA to -3. // Inverted AOA on entry burn
         _ECU("STAGE 1", "Startup"). // Enable Engines Entryburn start
         _ECU("STAGE 1", "Next Mode"). // Single Engine Startup
         _ECUTHROTTLE(10). // 10% Throttle
@@ -173,12 +184,15 @@ GLOBAL FUNCTION _REENTRYBURN {
         UNTIL ship:verticalSpeed >= _RTLS_REENTRYSTOP {wait 0.}
 
         _ECUTHROTTLE(0). // 0% Throttle
+        // _ECU("STAGE 1", "Next Mode"). // Single Engine Landing Burn
         set _ERRORSCALING to 1.2. // Increases scaling of guidance
     }
 }
 
 GLOBAL FUNCTION _ATMOSPHERICGUIDANCE {
-    set steeringManager:maxstoppingtime to 10. // Better Control
+    set steeringManager:torqueepsilonmin to 0.0002. // Less RCS Spasms
+    set steeringManager:torqueepsilonmax to 0.001.
+    set steeringManager:maxstoppingtime to 20. // Better Control
     set steeringManager:rollts to 5. // Roll Speed
 
     UNTIL ship:altitude <= 2500 {
@@ -187,7 +201,7 @@ GLOBAL FUNCTION _ATMOSPHERICGUIDANCE {
         IF ship:altitude < 20000 {set _MAXAOA to 20.}
         IF ship:altitude < 15000 {set _MAXAOA to 15.}
         IF ship:altitude < 10000 {set _MAXAOA to 10.}
-        IF ship:altitude < 5000 {set _MAXAOA to 7.5.}
+        IF ship:altitude < 5000 {set _MAXAOA to 7.5. set _ERRORSCALING to 1.2.}
 
         _STEER_DIRECT(_STEERTOLZ()).
     }
@@ -201,11 +215,11 @@ GLOBAL FUNCTION _LANDINGBURNRTLS {
     lock _BURNTHROTTLE to _STOPDISTANCE / _TRUERADAR.
 
     // Landing Burn Start
-        UNTIL _TRUERADAR <= (_STOPDISTANCE - _BOOSTER_ALTOFFSET + 300) {lock steering to _STEERTOLZ(). print _TRUERADAR at (10, 13). wait 0.} // Wait until suicide burn altitude#
+        UNTIL _TRUERADAR <= (_STOPDISTANCE - _BOOSTER_ALTOFFSET + 100) {lock steering to _STEERTOLZ(). print _TRUERADAR at (10, 13). wait 0.} // Wait until suicide burn altitude#
         lock steering to _STEERTOLZ().
         lock throttle to (_BURNTHROTTLE + 0.2). // Start Suicide Burn
-        set _MAXAOA to -5. // Inverted AOA for landing burn
-        set _ERRORSCALING to 0.8. // Slower Guidance
+        set _MAXAOA to -6. // Inverted AOA for landing burn
+        set _ERRORSCALING to 1.2. // Slower Guidance
         
 
     // Landing Gear
@@ -215,15 +229,15 @@ GLOBAL FUNCTION _LANDINGBURNRTLS {
         } 
 
     // One Engine Switch
-        UNTIL ship:verticalspeed >= -40 {wait 0.}
+        UNTIL ship:verticalspeed >= -35 {wait 0.}
         _ECU("STAGE 1", "Next Mode").
         set _MAXAOA to -1.
-        lock throttle to (_BURNTHROTTLE + 0.3).
+        set _ERRORSCALING to 1.
+        lock throttle to (_BURNTHROTTLE + 0.375).
 
     // Final Landing Sector
-        IF _TRUERADAR < 80 {lock steering to up. set _MAXAOA to 0.}
+        IF _TRUERADAR < 80 {lock steering to heading(90,90). set _MAXAOA to 0.}
         UNTIL ship:verticalspeed >= -0.01 {wait 0.}
-        _ECUTHROTTLE(0). // 0% Throttle
 
     // Shutdown
         _ECUTHROTTLE(0). // Shutdown engines when landed
@@ -258,9 +272,8 @@ GLOBAL FUNCTION _LANDINGBURNASDS {
         lock throttle to (_BURNTHROTTLE + 0.4).
 
     // Final Landing Sector
-        IF _TRUERADAR < 80 {lock steering to up. set _MAXAOA to 0.}
+        IF _TRUERADAR < 80 {lock steering to heading(90,90). set _MAXAOA to 0.}
         UNTIL ship:verticalspeed >= -0.01 {wait 0.}
-        _ECUTHROTTLE(0). // 0% Throttle
 
     // Shutdown
         _ECUTHROTTLE(0). // Shutdown engines when landed

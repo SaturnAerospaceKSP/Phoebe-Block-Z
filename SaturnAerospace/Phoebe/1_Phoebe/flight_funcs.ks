@@ -92,6 +92,17 @@ GLOBAL FUNCTION _ECUTHROTTLE { // Replaces default throttle
     lock throttle to _TGT / 100.
 }
 
+GLOBAL FUNCTION _DEPLOYSIDEBOOSTERS { // Separates side boosters 
+    FOR P in ship:partstagged("SB_DEC") {
+            IF P:MODULES:CONTAINS("ModuleTundraDecouple") { // If the parts contain the module
+                LOCAL M is P:getmodule("ModuleTundraDecouple"). // Get the module
+                FOR A in M:ALLACTIONNAMES() { // For each action in action names
+                    if A:CONTAINS("Decouple") {M:DOACTION(A, true). set _SIDEBOOSTERS_ATTACHED to false.} // If the action names contain decoupling, decouple side boosters
+                }
+            }
+        }
+}
+
 GLOBAL FUNCTION _DEPLOYFAIRINGS { // Deploys Vehicle Payload Fairings when able
     IF ship:altitude >= _FAIRING_DEPLOYALTITUDE and ship:dynamicpressure <= _FAIRING_DEPLOYPRESSURE and _FAIRINGS_ATTACHED { // Checks to see the current parameters
         FOR P in ship:partstagged("S2_PLF") {

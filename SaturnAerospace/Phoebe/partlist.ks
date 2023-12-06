@@ -44,6 +44,7 @@ GLOBAL _PHOEBETAGS IS LEXICON(
         "CPU", "SB_CPU",
         "ENGINE", "SB_ENG",
         "TANK", "SB_TANK",
+        "DECOUPLER", "SB_DEC",
         "CGT", "SB_CGT",
         "LEGS", "SB_LEG",
         "FINS", "SB_FIN",

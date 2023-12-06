@@ -32,6 +32,8 @@ GLOBAL FUNCTION _CPUINIT {
     GLOBAL _STAGE1COMMANDCORE is _S1_CPU:getmodule("kOSProcessor"):connection. // Used to send messages to Stage 1
     IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
         GLOBAL _CALYPSOCOMMANDCORE is _CC_CPU:getmodule("kOSProcessor"):connection. // Connects directly to Calypso for preparation
+    } ELSE IF _VEHICLECONFIG = "Phoebe Heavy" {
+        GLOBAL _SIDEBOOSTERCOMMANDCORE is _SB_CPU:getmodule("kOSProcessor"):connection. // Side Cores CPU
     }
 
     _PHOEBEFLIGHTMAIN().
@@ -85,7 +87,7 @@ GLOBAL FUNCTION _PHASE1_TOWERCLEAR { // Liftoff - gravity turn start speed
     // local _VEHICLEUP is facing. // Sets the current facing to a variable
 
     lock steering to _STEER_TARGET. // Steers up from the pad
-    _ECUTHROTTLE(100). // 100% Throttle
+    _ECUTHROTTLE(95). // 95% Throttle
 
     UNTIL ship:verticalSpeed >= _GRAVITYTURN_STARTSPEED {
         wait 0.
@@ -94,20 +96,13 @@ GLOBAL FUNCTION _PHASE1_TOWERCLEAR { // Liftoff - gravity turn start speed
 
 GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Checks
     local _G_FORCE_LIMIT is _GFORCELIMIT * 10. // Will allow for Max G Throttling 
-    local _CURRENTPITCH is 90. // Start Angle for gravity turn
+    local _CURRENTPITCH is 90. // Start Angle for gravity turn 
     _CHECKRECOVERYMETHOD(_STAGE1OXCURRENT).
 
-    UNTIL _CURRENTPITCH = _GRAVITYTURN_ENDANGLE or _STAGE1OXCURRENT <= _SHUTDOWNFUELMARGAIN + 300 { // Gravity Turn Logic Here
+    UNTIL _CURRENTPITCH = _GRAVITYTURN_ENDANGLE or _STAGE1OXCURRENT <= _SHUTDOWNFUELMARGAIN + 400 { // Gravity Turn Logic Here
         local _THROTTLE_CONTROL is (_G_FORCE_LIMIT * ship:mass / (ship:maxThrust + 0.1) * 100). // Allows vehicle to maintain the G-Force target throughout gravity turn
         _HEADINGANDPITCHCONTROL("STAGE 1"). // Controls Heading & Pitch throughout gravity turn
         _GETVEHICLEFUEL("STAGE 1"). // Grabs fuel every tick
-
-        // Logging
-            print "OX - Current: " + round(_STAGE1OXCURRENT) + "     " at (10, 10).
-            print "OX - MECO: " + round(_STAGE1OXCURRENT - _SHUTDOWNFUELMARGAIN) + "     " at (10, 11).
-
-        // Phoebe Heavy Side Cores
-            // Here
 
         // Calypso Abort
             IF ag4 {
@@ -121,6 +116,8 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
                 _FLIGHTTERMINATIONSYSTEM("STAGE 1"). // Sends FTS command to stage 1
                 _FLIGHTTERMINATIONSYSTEM("STAGE 2"). // Sends FTS command to stage 2
             }
+
+        // Phoebe Heavy Separation
 
         // Throttle & Steering
             _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL).
@@ -144,14 +141,15 @@ GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate a
 
     // Separation & Core Messages
         _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1 
-        _RCSCU("STAGE 2", "FORE", "ON"). // Ullage begin
+        _RCSCU("FORE", "STAGE 2", "ON"). // Ullage begin
+
         wait 3. // Settle Time
 
     // Stage 2 Engine Start
         _ECU("STAGE 2", "Startup").
         _ECUTHROTTLE(10). // 10% Throttle (TEATEB)
-        _RCSCU("STAGE 2", "FORE", "OFF"). // Ullage Complete
-        rcs off. // Turns RCS off
+        _RCSCU("FORE", "STAGE 2", "OFF"). // Ullage Complete
+        rcs off.
 
         wait 1.5. // Time To Make Space From Booster
         _ECUTHROTTLE(100). // 100% Throttle (SES-1)
@@ -233,7 +231,7 @@ GLOBAL FUNCTION _PHASE2_ORBITINSERTIONBURN {
 
     _ECUTHROTTLE(70). // 100% Throttle (SES-2)
 
-    UNTIL ship:periapsis >= (_APOGEETARGET - 0.3) {
+    UNTIL ship:periapsis >= (_PERIGEETARGET - 0.3) {
         wait 0.
     }
 

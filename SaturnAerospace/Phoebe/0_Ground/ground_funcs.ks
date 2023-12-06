@@ -42,6 +42,8 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         // Count Events
             global _TIME_CREWARMRETRACT to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Crew Arm Retract"]).
             global _TIME_CALYPSOSTARTUP to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Calypso Startup"]).
+            global _TIME_PHOEBEHEAVYFUELSTART to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Phoebe Heavy Fueling Start"]).
+            global _TIME_PHOEBEFUELSTART to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Phoebe Fueling Start"]).
             global _TIME_INTERNALPOWER to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Internal Power"]).
             global _TIME_STRONGBACKRETRACT to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Strongback Retract"]).
             global _TIME_FUELINGCLOSEOUT to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Fueling Closeout"]).
@@ -80,7 +82,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
     // Calypso Tour - Oxford style mission - no docking
 
     // Default Parts (Ground)
-    IF SHIP:STATUS = "PRELAUNCH" {
+    IF SHIP:STATUS = "PRELAUNCH" and ship:verticalspeed < 0.01 {
         global _GND_CPU to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["CPU"])[0].
         global _GND_STRONGBACK to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["STRONGBACK"])[0].
         IF _LAUNCHMOUNT = "KSC 39a" {
@@ -125,11 +127,12 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _SB_CPU to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["CPU"])[1].
             global _SB_ENG to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["ENGINE"])[1].
             global _SB_TNK to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["TANK"])[1].
-            global _SB_CGT to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["CGT"])[4].
+            global _SB_DEC to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["DECOUPLER"])[1].
+            global _SB_CGT to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["CGT"])[3].
             global _SB_LEG to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["LEGS"])[7].
             global _SB_FIN to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["FINS"])[7].
             global _SB_NSE to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["NOSE"])[1].
-            global _SB_FTS to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["FTS"])[0].
+            global _SB_FTS to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["FTS"])[1].
 
         // Stage 2
             global _S2_CPU to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["CPU"])[0].
@@ -196,6 +199,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
 
     // Extra Variables
         GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")). // Shutdown point for stage 1 ascent (meco)
+        IF _VEHICLECONFIG = "Phoebe Heavy" {global _SIDEBOOSTERS_ATTACHED is true.} // This sets side boosters attachment state for use in separation
 
     // Define Parts Complete
 }
@@ -228,9 +232,23 @@ GLOBAL FUNCTION _ECU { // Engine Control Unit
         }
     } ELSE IF _STAGE = "SIDE BOOSTERS" {
         IF _ECUACTION = "Startup" {
-            _SB_ENG:getmodule("ModuleTundraEngineSwitch"):doaction("Activate Engine", true). 
+            FOR P in ship:partstagged("SB_ENG") {
+                IF P:MODULES:CONTAINS("ModuleTundraEngineSwitch") { // If the parts contain the module
+                    LOCAL M is P:getmodule("ModuleTundraEngineSwitch"). // Get the module
+                    FOR A in M:ALLACTIONNAMES() { // For each action in action names
+                        IF A:CONTAINS("Activate Engine") {M:DOACTION(A, true).} // If the action names contain decoupling, Starts side booster engines
+                    }
+                }
+            }
         } ELSE IF _ECUACTION = "Shutdown" {
-            _SB_ENG:getmodule("ModuleTundraEngineSwitch"):doaction("Shutdown Engine", true). 
+            FOR P in ship:partstagged("SB_ENG") {
+                IF P:MODULES:CONTAINS("ModuleTundraEngineSwitch") { // If the parts contain the module
+                    LOCAL M is P:getmodule("ModuleTundraEngineSwitch"). // Get the module
+                    FOR A in M:ALLACTIONNAMES() { // For each action in action names
+                        IF A:CONTAINS("Shutdown Engine") {M:DOACTION(A, true).} // If the action names contain decoupling, Starts side booster engines
+                    }
+                }
+            }
         }
     } 
 }
@@ -263,7 +281,8 @@ GLOBAL FUNCTION _HOLDCHECKER { // Checks for holds & aborts
                         print "AG6 - Continue @ " + _FORMATSECONDS(_TMINUS) at (10, 11). 
                         print "AG9 - Scrub" at (10, 12).
 
-                        if ag9 {clearscreen. _GROUNDSAFEPROCEDURE(_CURRENTTIME).}
+                        if ag9 {clearscreen. reboot.}
+                        if ag10 {clearScreen. _GROUNDSAFEPROCEDURE(_CURRENTTIME).}
                         wait 0.
                     }
 
@@ -285,9 +304,9 @@ GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
         _TOWERACTIONS("Toggle Arm").
     } ELSE IF _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
         _CALYPSOCOMMANDCORE:SENDMESSAGE("Initialise Calypso"). // Sends a command to begin startup on Calypso & Internal Work
-    } ELSE IF _CURRENTTIME = 2100 and _VEHICLECONFIG = "Phoebe Heavy" {
+    } ELSE IF _CURRENTTIME = _TIME_PHOEBEHEAVYFUELSTART and _VEHICLECONFIG = "Phoebe Heavy" {
         _STRONGBACKACTIONS("Start Fueling"). // Phoebe Heavy Fueling Procedure takes longer and starts at 35 minutes
-    } ELSE IF _CURRENTTIME = 1560 and _VEHICLECONFIG = not "Phoebe Heavy" { 
+    } ELSE IF _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = not "Phoebe Heavy" { 
         _STRONGBACKACTIONS("Start Fueling"). // Phoebe / Calypso, starts at 26 minutes
     } ELSE IF _CURRENTTIME = _TIME_INTERNALPOWER {
         _STRONGBACKACTIONS("Stop Generator").
@@ -304,8 +323,8 @@ GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
         _ECU("STAGE 1", "Startup").
         _ECUTHROTTLE(100).
     } ELSE IF _CURRENTTIME = 0 {
-        _STRONGBACKACTIONS("Release"). 
         _STAGE2COMMANDCORE:SENDMESSAGE("Run Stage 2"). // Sends the S1 CPU a command to run
+        _STRONGBACKACTIONS("Release"). 
     }
 }
 
@@ -354,7 +373,9 @@ GLOBAL FUNCTION _TOWERACTIONS { // Crew arm actions on 39a/40 crews
     parameter _ACTION.
 
     IF _ACTION = "Toggle Arm" {
-        _GND_TOWER:getmodule("ModuleAnimateGeneric"):doaction("Toggle", true).
+        IF _GND_TOWER:getmodule("ModuleAnimateGeneric"):hasaction("Toggle") { // Checks it has the ability to retract (Phoebe Heavy doesnt have the arm and wont need this)
+            _GND_TOWER:getmodule("ModuleAnimateGeneric"):doaction("Toggle", true).
+        }
     }
 }
 
@@ -458,23 +479,22 @@ GLOBAL FUNCTION _GETVEHICLEFUEL { // Returns fuel and capacity of vehicle
                 set _SIDEBOOSTERSOXCURRENT to res:amount.
             }
         }
-    } //ELSE IF _STAGE = "CALYPSO" {
-    //     FOR res IN _CC_TNK:resources {
-    //         IF res:name = "LiquidFuel" {
-                
-    //         } ELSE IF res:name = "Oxidizer" {
-                
-    //         }
-    //     }
-    // }
+    } ELSE IF _STAGE = "CALYPSO" {
+        FOR res IN _CC_CAP:resources {
+            IF res:name = "Monopropellant" {
+                set _CALYPSOMONOPROPCURRENT to res:amount.
+                set _CALYPSOMONOPROPCAPACITY to res:capacity.
+            } 
+        }
+    }
 }
 
 GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and decides recovery method
     parameter _CURRENTPROPELLANT.
 
-    local _ASDS_PROPELLANT is 1850. // Anything Above 600KM Apogee
-    local _RTLS_PROPELLANT is 2475. // 600 KM Max RTLS Apogee
-    local _EXPD_PROPELLANT is 10. // Expended booster
+    global _ASDS_PROPELLANT is 1850. // Anything Above 600KM Apogee
+    global _RTLS_PROPELLANT is 2475. // 600 KM Max RTLS Apogee
+    global _EXPD_PROPELLANT is 10. // Expended booster
 
     IF _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT { // Any orbit above 600km
         return _ASDS_PROPELLANT.
@@ -484,7 +504,7 @@ GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and de
         return _ASDS_PROPELLANT.
     } ELSE IF _APOGEETARGET > 1200000 {
         return _EXPD_PROPELLANT.
-    }
+    } 
 }
 
 GLOBAL FUNCTION _SENDABORTCALYPSO { // Sends commands to each stage to abort & separates calypso
