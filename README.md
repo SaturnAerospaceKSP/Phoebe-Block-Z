@@ -18,7 +18,7 @@
 - Upgraded Recovery for Stage 1 (Center Core) & Less RCS Usage
 - Overall Improved Optimisation 
 
-## User Guide: 
+## User Guide (INDESTRUCTIBLE FACILITIES NEED TO BE ON): 
 ### Part Tags
 To ensure that the software will work correctly, please visit the "SaturnAerospace/Phoebe/Partlist.ks" file and make sure that your craft has the same files
 You must right click the corresponding part in the VAB and set the kOS nametag to be identical to the value on the right of each list, e.g. "CPU", "S1_CPU" - You would use the part tag **S1_CPU**.
