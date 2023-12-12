@@ -94,8 +94,8 @@ GLOBAL FUNCTION _ECUTHROTTLE { // Replaces default throttle
 
 GLOBAL FUNCTION _DEPLOYSIDEBOOSTERS { // Separates side boosters 
     FOR P in ship:partstagged("SB_DEC") {
-            IF P:MODULES:CONTAINS("ModuleTundraDecouple") { // If the parts contain the module
-                LOCAL M is P:getmodule("ModuleTundraDecouple"). // Get the module
+            IF P:MODULES:CONTAINS("ModuleTundraAnchoredDecoupler") { // If the parts contain the module
+                LOCAL M is P:getmodule("ModuleTundraAnchoredDecoupler"). // Get the module
                 FOR A in M:ALLACTIONNAMES() { // For each action in action names
                     if A:CONTAINS("Decouple") {M:DOACTION(A, true). set _SIDEBOOSTERS_ATTACHED to false.} // If the action names contain decoupling, decouple side boosters
                 }
@@ -132,7 +132,7 @@ GLOBAL FUNCTION _PAYLOADSEPARATION { // Deploys payload(s) into orbit after flig
             stage. // Separates 
 
             wait 4. // 4 Seconds between each separation
-            set _PAYLOADSDEPLOYED to _PAYLOADSDEPLOYED + 1.
+            set _PAYLOADSDEPLOYED to _PAYLOADSDEPLOYED + 1. /// Quasy Quasy Quasy if you see this the code is still a copy
         }
     } ELSE {
         wait until _FAIRINGS_ATTACHED = false.

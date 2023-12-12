@@ -22,23 +22,6 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         global _INCLINETARGET to _MISSIONSETTINGS["Incline"].
 
     // _COUNTDOWNEVENTS 
-        // Count Begin
-            IF _VESSELTARGET = false {
-                IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
-                    set _BEGINCOUNTTIME to _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"].
-                }  ELSE {
-                    set _BEGINCOUNTTIME to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Begin Countdown (NS)"]).
-                }
-            } ELSE {
-                // Logic for launching with an instantaneous window NEEDS to be added here for actual timed launches
-
-                IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
-                    set _BEGINCOUNTTIME to _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"].
-                }  ELSE {
-                    set _BEGINCOUNTTIME to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Begin Countdown (NS)"]).
-                }
-            }
-
         // Count Events
             global _TIME_CREWARMRETRACT to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Crew Arm Retract"]).
             global _TIME_CALYPSOSTARTUP to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Calypso Startup"]).
@@ -69,6 +52,23 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
     // Extra General Settings
         GLOBAL _GOFORLAUNCH IS TRUE. // Are We (by default) GO FOR LAUNCH 
         GLOBAL _AZIMUTHCALCULATION is LAZcalc_init(_APOGEETARGET, _INCLINETARGET). // Creates a heading from the Apogee and inclination targets
+
+        // Count Begin
+            IF _VEHICLECONFIG = "Calypso Tour" or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Logic for no docking code
+                IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
+                    global _BEGINCOUNTTIME to _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"].
+                } ELSE {
+                    global _BEGINCOUNTTIME to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Begin Countdown (NS)"]).
+                }
+            } ELSE IF _VEHICLECONFIG = "Calypso Dock" {
+                // Docking Code Here
+                IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
+                    global _BEGINCOUNTTIME to _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"].
+                } ELSE {
+                    global _BEGINCOUNTTIME to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Begin Countdown (NS)"]).
+                }
+            }
+
 
     // Define Settings Complete
 }
@@ -110,8 +110,6 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _S2_PLF to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLF"])[1].
             global _S2_PLS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLS"])[0].
             global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
-        
-
     } ELSE IF _VEHICLECONFIG = "Phoebe Heavy" {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
@@ -199,7 +197,8 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
 
     // Extra Variables
         GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")). // Shutdown point for stage 1 ascent (meco)
-        IF _VEHICLECONFIG = "Phoebe Heavy" {global _SIDEBOOSTERS_ATTACHED is true.} // This sets side boosters attachment state for use in separation
+        IF _VEHICLECONFIG = "Phoebe Heavy" {global _SIDEBOOSTERS_ATTACHED is true. set _SHUTDOWNFUELSIDEBOOSTERS to 4950.} // This sets side boosters attachment state for use in separation
+        ELSE {set _SIDEBOOSTERS_ATTACHED to false.}
 
     // Define Parts Complete
 }
@@ -249,6 +248,24 @@ GLOBAL FUNCTION _ECU { // Engine Control Unit
                     }
                 }
             }
+        } ELSE IF _ECUACTION = "Next Mode" {
+            FOR P in ship:partstagged("SB_ENG") {
+                IF P:MODULES:CONTAINS("ModuleTundraEngineSwitch") { // If the parts contain the module
+                    LOCAL M is P:getmodule("ModuleTundraEngineSwitch"). // Get the module
+                    FOR A in M:ALLACTIONNAMES() { // For each action in action names
+                        IF A:CONTAINS("Next Engine Mode") {M:DOACTION(A, true).} // If the action names contain decoupling, Starts side booster engines
+                    }
+                }
+            }
+        } ELSE IF _ECUACTION = "Previous Mode" {
+            FOR P in ship:partstagged("SB_ENG") {
+                IF P:MODULES:CONTAINS("ModuleTundraEngineSwitch") { // If the parts contain the module
+                    LOCAL M is P:getmodule("ModuleTundraEngineSwitch"). // Get the module
+                    FOR A in M:ALLACTIONNAMES() { // For each action in action names
+                        IF A:CONTAINS("Previous Engine Mode") {M:DOACTION(A, true).} // If the action names contain decoupling, Starts side booster engines
+                    }
+                }
+            }
         }
     } 
 }
@@ -266,6 +283,7 @@ GLOBAL FUNCTION _HOLDCHECKER { // Checks for holds & aborts
     // Manual Hold Procedure
         IF ag9 or NOT _GOFORLAUNCH and _CURRENTTIME >= _TIME_LASTABORT {
             set _HOLDTIME to _CURRENTTIME.
+            log "HOLD" to "0:/Data/Phoebe/mission_time.txt".
 
             IF ag9 {
                 ag9 off.
@@ -300,20 +318,20 @@ GLOBAL FUNCTION _HOLDCHECKER { // Checks for holds & aborts
 GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
     parameter _CURRENTTIME.
 
-    IF _CURRENTTIME = _TIME_CREWARMRETRACT and _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
+    IF _CURRENTTIME = _TIME_CREWARMRETRACT and _VEHICLECONFIG = "Calypso Dock" or _CURRENTTIME = _TIME_CREWARMRETRACT and _VEHICLECONFIG = "Calypso Tour" {
         _TOWERACTIONS("Toggle Arm").
-    } ELSE IF _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
+    } ELSE IF _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso Dock" or _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso Tour" {
         _CALYPSOCOMMANDCORE:SENDMESSAGE("Initialise Calypso"). // Sends a command to begin startup on Calypso & Internal Work
     } ELSE IF _CURRENTTIME = _TIME_PHOEBEHEAVYFUELSTART and _VEHICLECONFIG = "Phoebe Heavy" {
-        // _STRONGBACKACTIONS("Start Fueling"). // Phoebe Heavy Fueling Procedure takes longer and starts at 35 minutes
-    } ELSE IF _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = not "Phoebe Heavy" { 
-        // _STRONGBACKACTIONS("Start Fueling"). // Phoebe / Calypso, starts at 26 minutes
+        _STRONGBACKACTIONS("Start Fueling"). // Phoebe Heavy Fueling Procedure takes longer and starts at 35 minutes
+    } ELSE IF _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Phoebe" or _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Calypso Dock" or _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Calypso Tour" { 
+        _STRONGBACKACTIONS("Start Fueling"). // Phoebe / Calypso, starts at 26 minutes
     } ELSE IF _CURRENTTIME = _TIME_INTERNALPOWER {
-        // _STRONGBACKACTIONS("Stop Generator").
+        _STRONGBACKACTIONS("Stop Generator").
     } ELSE IF _CURRENTTIME = _TIME_STRONGBACKRETRACT {
         _STRONGBACKACTIONS("Retract").
     } ELSE IF _CURRENTTIME = _TIME_FUELINGCLOSEOUT {
-        // _STRONGBACKACTIONS("Stop Fueling").
+        _STRONGBACKACTIONS("Stop Fueling").
         toggle ag5. // Disconnects the fuel lines from the strongback
     } ELSE IF _CURRENTTIME = _TIME_SIDECOREIGNITE and _VEHICLECONFIG = "Phoebe Heavy" { // Heavy on 39a
         _ECU("SIDE BOOSTERS", "Startup").
@@ -340,15 +358,25 @@ GLOBAL FUNCTION _STRONGBACKACTIONS { // Controls for vehicle strongback
                 _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doevent("Close Erector").
             }
         } ELSE IF _ACTION = "Release" {
-            _GND_STRONGBACK:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true).
+            IF _GND_STRONGBACK:getmodule("ModuleTundraDecoupler"):hasaction("Decouple") {
+                _GND_STRONGBACK:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true).
+            }
         } ELSE IF _ACTION = "Start Fueling" {
-            _GND_STRONGBACK:getmodulebyindex(7):doaction("Start Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Start Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(11):doaction("Start Fueling", true).
+            }
         } ELSE IF _ACTION = "Stop Fueling" {
-            _GND_STRONGBACK:getmodulebyindex(7):doaction("Stop Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Stop Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(11):doaction("Stop Fueling", true).
+            }
         } ELSE IF _ACTION = "Start Generator" {
-            _GND_STRONGBACK:getmodulebyindex(6):doaction("Enable Power Generator", true).
+            IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Enable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(10):doaction("Enable Power Generator", true).
+            }
         } ELSE IF _ACTION = "Stop Generator" {
-            _GND_STRONGBACK:getmodulebyindex(6):doaction("Disable Power Generator", true).
+           IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Disable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(10):doaction("Disable Power Generator", true).
+           }
         }
     } ELSE IF _LAUNCHMOUNT = "KSC 39a" {
         IF _ACTION = "Retract" {
@@ -358,14 +386,22 @@ GLOBAL FUNCTION _STRONGBACKACTIONS { // Controls for vehicle strongback
         } ELSE IF _ACTION = "Release" {
             _GND_STRONGBACK:getmodule("LaunchClamp"):doaction("Release Clamp", true).
         } ELSE IF _ACTION = "Start Fueling" {
-            _GND_STRONGBACK:getmodulebyindex(9):doaction("Start Fueling", true).
+            _GND_STRONGBACK:getmodulebyindex(13):doaction("Start Fueling", true).
         } ELSE IF _ACTION = "Stop Fueling" {
-            _GND_STRONGBACK:getmodulebyindex(9):doaction("Stop Fueling", true).
+            _GND_STRONGBACK:getmodulebyindex(13):doaction("Stop Fueling", true).
         } ELSE IF _ACTION = "Start Generator" {
-            _GND_STRONGBACK:getmodulebyindex(8):doaction("Enable Power Generator", true).
+            _GND_STRONGBACK:getmodulebyindex(12):doaction("Enable Power Generator", true).
         } ELSE IF _ACTION = "Stop Generator" {
-            _GND_STRONGBACK:getmodulebyindex(8):doaction("Disable Power Generator", true).
+            _GND_STRONGBACK:getmodulebyindex(12):doaction("Disable Power Generator", true).
         }
+    } ELSE IF _LAUNCHMOUNT = "Falcon 1.1" {
+        IF _ACTION = "Retract" {
+            _GND_STRONGBACK:getmodule("moduleanimategeneric"):doaction("Toggle", true).
+        } ELSE IF _ACTION = "Revert" {
+            _GND_STRONGBACK:getmodule("moduleanimategeneric"):doaction("Toggle", true).
+        } ELSE IF _ACTION = "Release" {
+            _GND_STRONGBACK:getmodule("launchclamp"):doaction("Release Clamp", true).
+        } 
     }
 }
 
@@ -493,12 +529,12 @@ GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and de
     parameter _CURRENTPROPELLANT.
 
     global _ASDS_PROPELLANT is 1850. // Anything Above 600KM Apogee
-    global _RTLS_PROPELLANT is 2475. // 600 KM Max RTLS Apogee
+    global _RTLS_PROPELLANT is 2500. // 600 KM Max RTLS Apogee
     global _EXPD_PROPELLANT is 10. // Expended booster
 
     IF _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT { // Any orbit above 600km
         return _ASDS_PROPELLANT.
-    } ELSE IF _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT and _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Any orbit under 600km
+    } ELSE IF _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Any orbit under 600km
         return _RTLS_PROPELLANT.
     } ELSE IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" { // Always ASDS for crew (fuel margin is safe)
         return _ASDS_PROPELLANT.

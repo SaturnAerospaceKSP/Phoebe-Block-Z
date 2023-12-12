@@ -22,7 +22,7 @@ GLOBAL FUNCTION _CPUINIT {
     set steeringManager:maxstoppingtime to 1. // Max Vehicle Turning Speed
     set steeringManager:rollts to 30. // Max Roll Speed
     set config:ipu to 2000. // CPU speed
-    set kuniverse:defaultloaddistance:flying:unload to 90000. // Unload distance increased for flying objects
+    set kuniverse:defaultloaddistance:flying:unload to 30000. // Unload distance increased for flying objects
 
     _DEFINESETTINGS(). // Defines mission settings and configuration
     _DEFINEPARTS(). // Defines all vehicle parts based on configuration setting 
@@ -103,6 +103,7 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
         local _THROTTLE_CONTROL is (_G_FORCE_LIMIT * ship:mass / (ship:maxThrust + 0.1) * 100). // Allows vehicle to maintain the G-Force target throughout gravity turn
         _HEADINGANDPITCHCONTROL("STAGE 1"). // Controls Heading & Pitch throughout gravity turn
         _GETVEHICLEFUEL("STAGE 1"). // Grabs fuel every tick
+        IF _VEHICLECONFIG = "Phoebe Heavy" {_GETVEHICLEFUEL("SIDE BOOSTERS").} // Side Booster fuel
 
         // Calypso Abort
             IF ag4 {
@@ -118,6 +119,22 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
             }
 
         // Phoebe Heavy Separation
+            IF _SIDEBOOSTERS_ATTACHED and _SIDEBOOSTERSOXCURRENT < _SHUTDOWNFUELSIDEBOOSTERS + 100 {
+                set _S1_ENG:thrustlimit to 60. // Limits center core thrust for separation
+
+                _ECU("SIDE BOOSTERS", "SHUTDOWN"). // Shutdown Side Core Engines
+                wait 0.5.
+
+                _SIDEBOOSTERCOMMANDCORE:SENDMESSAGE("Initialise Side Core Recovery"). // Sends command to side boosters to begin their flight
+                _SIDEBOOSTERCOMMANDCORE:SENDMESSAGE("Initialise Side Core Recovery").
+                
+                _DEPLOYSIDEBOOSTERS(). // Separates boosters
+
+                wait 1. // Waits a second to throttle back up
+                set _S1_ENG:thrustlimit to 100. // Full Throttle
+
+                set _SIDEBOOSTERS_ATTACHED to false. // Sets side boosters to separated state to prevent double sep
+            }
 
         // Throttle & Steering
             _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL).
@@ -137,7 +154,7 @@ GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate a
         _STAGE1COMMANDCORE:SENDMESSAGE("Initialise Recovery"). // Sends the command to S1's core to begin recovery (BEFORE SEP)
 
         rcs on. // Turn On RCS ports
-        wait 1.5. // Settle Time
+        wait 2. // Settle Time
 
     // Separation & Core Messages
         _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1 
@@ -223,16 +240,23 @@ GLOBAL FUNCTION _PHASE2_VEHICLEGUIDANCE {
 GLOBAL FUNCTION _PHASE2_ORBITINSERTIONBURN {
     LOCAL _TARGETVEL is _ORBITALVELOCITYPERIGEE(_APOGEETARGET, _PERIGEETARGET).
     local _CURRENTVEL is _ORBITALVELOCITYAPOGEE(ship:apoapsis, ship:periapsis).
-    local _VELTOGO is _TARGETVEL - _CURRENTVEL. // Maths finding difference of velocity
+    local _VELTOGO is _TARGETVEL - _CURRENTVEL. // Maths finding difference of velocity 
     local _MAXACCELERATION is ship:maxthrust / ship:mass. // Max Vehicle Acceleration
     local _REQUIREDBURNDURATION is _VELTOGO / _MAXACCELERATION. // Required Burn for orbit
 
-    UNTIL eta:apoapsis - 1 <= (_REQUIREDBURNDURATION / 2) {_STEER_DIRECT(prograde). wait 0.}
+    UNTIL eta:apoapsis - 1 <= (_REQUIREDBURNDURATION / 2) {
+        _STEER_DIRECT(prograde).
+        
+        IF ship:apoapsis < _APOGEETARGET {rcs on. _RCSCU("FORE", "STAGE 2", "ON").} 
+        ELSE {_RCSCU("FORE", "STAGE 2", "OFF"). rcs off.}    
+        }
 
     _ECUTHROTTLE(70). // 100% Throttle (SES-2)
 
     UNTIL ship:periapsis >= (_PERIGEETARGET - 0.3) {
         wait 0.
+
+        if ship:periapsis >= _PERIGEETARGET - 10000 {_ECUTHROTTLE(40).}
     }
 
     _ECUTHROTTLE(0). // 0% Throttle (SECO-2)

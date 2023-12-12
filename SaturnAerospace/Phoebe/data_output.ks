@@ -25,48 +25,57 @@ until false {
 } 
 
 GLOBAL FUNCTION _DATAOUTPUTCHECKER {
-    IF exists("0:/Data/mission_Time.txt") { // Checks if mission time exists
-        deletePath("0:/Data/mission_Time.txt").
-        log "N/A" to "0:/Data/mission_Time.txt".
+    IF exists("0:/Data/Phoebe/mission_Time.txt") { // Checks if mission time exists
+        deletePath("0:/Data/Phoebe/mission_Time.txt").
+        log "N/A" to "0:/Data/Phoebe/mission_Time.txt".
     }
 
-    IF exists("0:/Data/vehicle_Speed.txt") { // Checks if vehicle speed text file exists
-        deletePath("0:/Data/vehicle_Speed.txt").
-        log "N/A" to "0:/Data/vehicle_Speed.txt".
+    IF exists("0:/Data/Phoebe/vehicle_Speed.txt") { // Checks if vehicle speed text file exists
+        deletePath("0:/Data/Phoebe/vehicle_Speed.txt").
+        log "N/A" to "0:/Data/Phoebe/vehicle_Speed.txt".
     } 
 
-    IF exists("0:/Data/vehicle_Alt.txt") { // Checks if vehicle altitude file exists
-        deletePath("0:/Data/vehicle_Alt.txt").
-        log "N/A" to "0:/Data/vehicle_Alt.txt".
+    IF exists("0:/Data/Phoebe/vehicle_Alt.txt") { // Checks if vehicle altitude file exists
+        deletePath("0:/Data/Phoebe/vehicle_Alt.txt").
+        log "N/A" to "0:/Data/Phoebe/vehicle_Alt.txt".
     }
 
-    IF exists("0:/Data/vehicle_LF.txt") { // Checks if LiquidFuel Data exists
-        deletePath("0:/Data/vehicle_LF.txt").
-        log "N/A" to "0:/Data/vehicle_LF.txt".
+    IF exists("0:/Data/Phoebe/stage1_propellant.txt") { // Checks if Stage 1 Data exists
+        deletePath("0:/Data/Phoebe/stage1_propellant.txt").
+        log "N/A" to "0:/Data/Phoebe/stage1_propellant.txt".
     }
 
-    IF exists("0:/Data/vehicle_OX.txt") { // Checks if Oxidizer Data exists
-        deletePath("0:/Data/vehicle_OX.txt").
-        log "N/A" to "0:/Data/vehicle_OX.txt".
+    IF exists("0:/Data/Phoebe/stage2_propellant.txt") { // Checks if Stage 2 Data exists
+        deletePath("0:/Data/Phoebe/stage2_propellant.txt").
+        log "N/A" to "0:/Data/Phoebe/stage2_propellant.txt".
     }
 }
 
 GLOBAL FUNCTION _DATALOGGING {
-    log floor(ship:airspeed * 3.6) to  "0:/Data/vehicle_Speed.txt". // Speed in km/h
-    log floor(ship:altitude / 1000, 1) to "0:/Data/vehicle_alt.txt". // Altitude in km
+    log floor(ship:airspeed * 3.6) to  "0:/Data/Phoebe/vehicle_Speed.txt". // Speed in km/h
+    log floor(ship:altitude / 1000, 1) to "0:/Data/Phoebe/vehicle_alt.txt". // Altitude in km
     _GETVEHICLEFUEL("STAGE 1").
     _GETVEHICLEFUEL("STAGE 2").
+    IF _VEHICLECONFIG = "Phoebe Heavy" {_GETVEHICLEFUEL("SIDE BOOSTERS").}
 
-    IF ship:status = "PRELAUNCH" {
-        set vehicle_TOTAL_LF to _STAGE1LFCURRENT + _STAGE2LFCURRENT. // Stage 1 & 2 Liquid Fuel Current
-        set vehicle_CAPAC_LF to _STAGE1LFCAPACITY + _STAGE2LFCAPACITY. // Stage 1 & 2 Liquid Fuel Capacity
+    set STAGE1_PROPELLANT to _STAGE1LFCURRENT + _STAGE1OXCURRENT.
+    set STAGE1_CAPACITY to _STAGE1LFCAPACITY + _STAGE1OXCAPACITY.
 
-        set vehicle_TOTAL_OX to _STAGE1OXCURRENT + _STAGE2OXCURRENT. // Stage 1 & 2 Oxidizer Current
-        set vehicle_CAPAC_OX to _STAGE1OXCAPACITY + _STAGE2OXCAPACITY. // Stage 1 & 2 Oxidizer Capacity
+    set STAGE2_PROPELLANT to _STAGE2LFCURRENT + _STAGE2OXCURRENT.
+    set STAGE2_CAPACITY to _STAGE2LFCAPACITY + _STAGE2OXCAPACITY.
 
-        log round((vehicle_TOTAL_LF / vehicle_CAPAC_LF) * 100, 1) to "0:/Data/vehicle_LF.txt". // Logs the Liquid Fuel for Stream
-        log round((vehicle_TOTAL_OX / vehicle_CAPAC_OX) * 100, 1) to "0:/Data/vehicle_OX.txt". // Logs the Oxidizer for Stream
+    IF _VEHICLECONFIG = "Phoebe Heavy" {
+        set SIDEBOOSTER_PROPELLANT to _SIDEBOOSTERSLFCURRENT + _SIDEBOOSTERSOXCURRENT. 
+        set SIDEBOOSTER_CAPACITY to _SIDEBOOSTERSLFCAPACITY + _SIDEBOOSTERSOXCAPACITY.
     }
+
+    IF _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
+        log round((STAGE1_PROPELLANT / STAGE1_CAPACITY) * 100, 1) + "%" to "0:/Data/Phoebe/stage1_propellant.txt". // Logs the Liquid Fuel for Stream
+    } ELSE IF _VEHICLECONFIG = "Phoebe Heavy" {
+        log round(((STAGE1_PROPELLANT + SIDEBOOSTER_PROPELLANT) / (STAGE1_CAPACITY + SIDEBOOSTER_CAPACITY)) * 100, 1) + "%" to "0:/Data/stage1_propellant.txt".
+    }
+
+    log round((STAGE2_PROPELLANT / STAGE2_CAPACITY) * 100, 1) + "%" to "0:/Data/Phoebe/stage2_propellant.txt". // Logs the Oxidizer for Stream
 
     // Telemetry Screen
         print "|───[SATURN AEROSPACE - 2024 PBZ]───" at (0,0).
@@ -79,17 +88,21 @@ GLOBAL FUNCTION _DATALOGGING {
         print "|───[VEHICLE]───────────────────────" at (0,7).
         print "| MASS: " + round(ship:mass, 1) + " (T)   " at (0,8).
         print "| THRUST: " + round(ship:availablethrust, 1) + " (KN)   " at (0,9).
-        print "| ALTITUDE: " + round(ship:altitude / 1000, 1) + " (KM)   " at (0,10).
-        print "| THROTTLE: " + round(throttle * 100, 3) + " (%)   " at (0,11).
-        print "| PITCH: " + round(90 - vectorAngle(ship:up:forevector, ship:facing:forevector), 3) + " (Deg)   " at (0,12).
-        print "|───[TIMINGS]───────────────────────" at (0,13).
-        print "| ETA APOGEE: " + _FORMATSECONDS(eta:apoapsis) + " (s)   "at (0,14).
-        print "| ETA PERIGEE: " + _FORMATSECONDS(eta:periapsis) + " (s)   " at (0,15).
-        print "|───[POSITION]──────────────────────" at (0,16).
-        print "| LNG COORDS: " + round(longitude, 3) + "   " at (0,17).
-        print "| LAT COORDS: " + round(latitude, 3) + "   " at (0,18).
-        print "|───────────────────────────────────" at (0,19).
+        print "| AIRSPEED: " + round(ship:airspeed, 1) + " (M/S)   " at (0,10).
+        print "| ALTITUDE: " + round(ship:altitude / 1000, 1) + " (KM)   " at (0,11).
+        print "| THROTTLE: " + round(throttle * 100, 3) + " (%)   " at (0,12).
+        print "| PITCH: " + round(90 - vectorAngle(ship:up:forevector, ship:facing:forevector), 3) + " (Deg)   " at (0,13).
+        print "|───[TIMINGS]───────────────────────" at (0,14).
+        print "| ETA APOGEE: " + _FORMATSECONDS(eta:apoapsis) + " (s)   "at (0,15).
+        print "| ETA PERIGEE: " + _FORMATSECONDS(eta:periapsis) + " (s)   " at (0,16).
+        print "|───[POSITION]──────────────────────" at (0,17).
+        print "| LNG COORDS: " + round(longitude, 3) + "   " at (0,18).
+        print "| LAT COORDS: " + round(latitude, 3) + "   " at (0,19).
+        print "|───────────────────────────────────" at (0,20).
         
+        if missionTime > 0 {
+            log "T+" + _FORMATSECONDS(missionTime) to "0:/Data/Phoebe/mission_Time.txt". // Logs T+ time
+        }
  // 39x17
     wait 0.15. 
 }
