@@ -12,6 +12,18 @@ GLOBAL FUNCTION _CALYPSOABORT {
     
 }
 
+GLOBAL FUNCTION _GET_DISTANCE { // Distance to desired craft
+    PARAMETER _TARGETCRAFT.
+
+    return _TARGETCRAFT:position:mag - ship:position:mag. // Distance between us & the station
+}
+
+
+
+
+
+
+
 
 
 
@@ -27,8 +39,7 @@ GLOBAL FUNCTION _CALYPSOMOTORTHROTTLE {
 
 GLOBAL FUNCTION _CALYPSOCAPSULEACTIONS {
     parameter _ACTION.
-
-    IF _ACTION = "TOGGLE Shroud" {
+    IF _ACTION = "TOGGLE SHROUD" {
         _CC_CAP:getmodule("ModuleAnimateGeneric"):doaction("Toggle Shroud", true).
     } ELSE IF _ACTION = "ABORT ABORT ABORT" {
         _CC_CAP:getmodule("ModuleEnginesFX"):doaction("Activate Engine", true).

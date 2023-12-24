@@ -42,8 +42,9 @@ GLOBAL FUNCTION _SIDEBOOSTERRECOVERY {
 
     set _THROTT to 0.
     lock throttle to _THROTT.
+    rcs on.
 
-    UNTIL not _LOOPING {
+    UNTIL _LOOPING = false {
         IF _ISBOOSTER("B1") {
             _BOOSTER_1().
             _BOOSTBACK_B1().
@@ -107,8 +108,6 @@ GLOBAL FUNCTION _BOOSTER_SEPARATION {
 
         kuniverse:forcesetactivevessel(SHIP).
         
-        _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
-        _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
     } ELSE IF _ISBOOSTER("B2") {
         set _LANDING_TGT to _BOOSTER2_LZ.
         set _THROTT to 0.
@@ -120,6 +119,9 @@ GLOBAL FUNCTION _BOOSTER_1 {
     set _COMM_TARGETVESSEL to vessel("Booster 2").
     _BOOSTER_STEERTOLZ(_BOOSTER_ADJUSTPITCH, _BOOSTER_ADJUSTLAT, _BOOSTER_ADJUSTLNG).
 
+    _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
+    _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
+
     wait 5.
     set _THROTT to 1.
 }
@@ -127,6 +129,9 @@ GLOBAL FUNCTION _BOOSTER_1 {
 GLOBAL FUNCTION _BOOSTER_2 {
     until _DONE = 0 {
         _PROCESS_COMMCOMMANDS().
+
+        _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
+        _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
 
         lock steering to _COPY_VESSELHEADING("Booster 1").
         lock throttle to _THROTT.

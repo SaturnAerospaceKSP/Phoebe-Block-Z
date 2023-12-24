@@ -20,7 +20,7 @@ GLOBAL FUNCTION _CPUINIT {
     runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks"). // Azimuth Calculations For Gravity Turn
 
     set steeringManager:maxstoppingtime to 1. // Max Vehicle Turning Speed
-    set steeringManager:rollts to 30. // Max Roll Speed
+    set steeringManager:rollts to 5. // Max Roll Speed
     set config:ipu to 2000. // CPU speed
     set kuniverse:defaultloaddistance:flying:unload to 30000. // Unload distance increased for flying objects
 
@@ -56,21 +56,19 @@ GLOBAL FUNCTION _PHOEBEFLIGHTMAIN {
         _PHASE2_VEHICLEGUIDANCE().
         _PHASE2_ORBITINSERTIONBURN().
         _PHASE2_ORBITOPS_CLEANUP().
-    } ELSE IF _VEHICLECONFIG = "Calypso Dock" {
+    } ELSE IF _VEHICLECONFIG = "Calypso Dock" { // This config uses calypso and has no orbit insertion due to calypso doing that on its own
         _PHASE1_TOWERCLEAR().
         _PHASE1_BOOSTERGUIDANCE().
         _PHASE1_STAGESEPARATION().
 
         _PHASE2_VEHICLEGUIDANCE().
-        _PHASE2_ORBITINSERTIONBURN().
         _PHASE2_ORBITOPS_CLEANUP().
-    } ELSE IF _VEHICLECONFIG = "Calypso Tour" {
+    } ELSE IF _VEHICLECONFIG = "Calypso Tour" { // This config uses calypso and doesnt need orbital insertion as this handles it itself
         _PHASE1_TOWERCLEAR().
         _PHASE1_BOOSTERGUIDANCE().
         _PHASE1_STAGESEPARATION().
 
         _PHASE2_VEHICLEGUIDANCE().
-        _PHASE2_ORBITINSERTIONBURN().
         _PHASE2_ORBITOPS_CLEANUP().
     }
 }
@@ -125,9 +123,14 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
                 _ECU("SIDE BOOSTERS", "SHUTDOWN"). // Shutdown Side Core Engines
                 wait 0.5.
 
-                _SIDEBOOSTERCOMMANDCORE:SENDMESSAGE("Initialise Side Core Recovery"). // Sends command to side boosters to begin their flight
-                _SIDEBOOSTERCOMMANDCORE:SENDMESSAGE("Initialise Side Core Recovery").
+                // FOR CPU in SHIP:partstagged("SB_CPU") {
+                //     IF CPU:hasmodule("kOSProcessor") {
+                //         CPU:SENDMESSAGE("Initialise Side Core Recovery"). // Sends command to side boosters to begin their flight
+                //     }
+                // }
                 
+                toggle ag8. // Temporary Fix
+                wait 0.1.
                 _DEPLOYSIDEBOOSTERS(). // Separates boosters
 
                 wait 1. // Waits a second to throttle back up
@@ -154,7 +157,7 @@ GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate a
         _STAGE1COMMANDCORE:SENDMESSAGE("Initialise Recovery"). // Sends the command to S1's core to begin recovery (BEFORE SEP)
 
         rcs on. // Turn On RCS ports
-        wait 2. // Settle Time
+        wait 2.5. // Settle Time
 
     // Separation & Core Messages
         _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1 
@@ -206,7 +209,6 @@ GLOBAL FUNCTION _PHASE2_VEHICLEGUIDANCE {
         
         // Loop Break Scenarios
             IF ship:apoapsis >= _APOGEETARGET and ship:periapsis >= body:atm:height - 10000 {break.}
-            // IF ship:apoapsis >= _APOGEETARGET and eta:apoapsis < eta:periapsis and ship:periapsis < body:atm:height {break.}
 
         // Calypso Abort
             IF ag4 {
@@ -222,19 +224,21 @@ GLOBAL FUNCTION _PHASE2_VEHICLEGUIDANCE {
         // Throttle & Steering
             _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL). // Steer Phoebe
 
-            IF ship:apoapsis <= _APOGEETARGET - 20000 {_ECUTHROTTLE(_THROTTLE_CONTROL).} // Initial Throttle at full power
+            IF ship:apoapsis <= _APOGEETARGET - 20000 {_ECUTHROTTLE(100).} // Initial Throttle at full power
             IF ship:apoapsis >= _APOGEETARGET - 20000 and ship:periapsis >= _PERIGEETARGET - 100000 {_ECUTHROTTLE(40).} // Final Slower Throttle
     }
 
     _ECUTHROTTLE(0). // 0% Throttle (SECO)
-    _RCSCU("FORE", "STAGE 2", "ON"). // RCS up to apoapsis
     
     UNTIL ship:apoapsis >= _APOGEETARGET {
+        IF ship:apoapsis < _APOGEETARGET {rcs on. set ship:control:fore to 0.5.}
+        ELSE {set ship:control:fore to 0. rcs off.}
+
         IF _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Phoebe Heavy" {_DEPLOYFAIRINGS().}
         wait 0.
     }
 
-    _RCSCU("FORE", "STAGE 2", "OFF").
+    wait 5.
 }
 
 GLOBAL FUNCTION _PHASE2_ORBITINSERTIONBURN {
@@ -269,7 +273,7 @@ GLOBAL FUNCTION _PHASE2_ORBITOPS_CLEANUP {
         _PAYLOADSEPARATION(). // Deploys payload / payloads
         _ORBITSHUTDOWNPROCEDURE().
     } ELSE IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" { 
-        _CALYPSOCOMMANDCORE:SENDMESSAGE("Calypso In Orbit"). // Sends a message to Calypso to begin its orbital operations
+        _CALYPSOCOMMANDCORE:SENDMESSAGE("Initialise Calypso"). // Sends a message to Calypso to begin its orbital operations
         _DEPLOYCALYPSO(). // Deploys calypso separating from stage 2
     }
 }

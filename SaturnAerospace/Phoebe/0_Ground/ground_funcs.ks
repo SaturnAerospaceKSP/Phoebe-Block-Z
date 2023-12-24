@@ -12,7 +12,13 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         set ship:name to _MISSIONSETTINGS["Mission Name"].
         global _LAUNCHMOUNT to _MISSIONSETTINGS["Launch Mount"].
         global _VEHICLECONFIG to _MISSIONSETTINGS["Payload Type"].
-        global _VESSELTARGET to _MISSIONSETTINGS["Target Vessel"].
+
+        IF _MISSIONSETTINGS["Target Vessel"] = false {
+            global _VESSELTARGET to "".
+        } ELSE {
+            global _VESSELTARGET to vessel(_MISSIONSETTINGS["Target Vessel"]).
+        }
+    
         global _PAYLOADCOUNT to _MISSIONSETTINGS["Payload Count"].
         global _ROLL to _MISSIONSETTINGS["Roll"].
         global _GFORCELIMIT to _MISSIONSETTINGS["G Force Limit"].
@@ -20,6 +26,8 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         global _APOGEETARGET to _MISSIONSETTINGS["Apogee"] * 1000.
         global _PERIGEETARGET to _MISSIONSETTINGS["Perigee"] * 1000.
         global _INCLINETARGET to _MISSIONSETTINGS["Incline"].
+
+        global _RECOVERY_METHOD to _MISSIONSETTINGS["FORCE RECOVERY"].
 
     // _COUNTDOWNEVENTS 
         // Count Events
@@ -56,17 +64,13 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         // Count Begin
             IF _VEHICLECONFIG = "Calypso Tour" or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Logic for no docking code
                 IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
-                    global _BEGINCOUNTTIME to _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"].
+                    global _BEGINCOUNTTIME to round(_COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] - kuniverse:realworldtime).
                 } ELSE {
                     global _BEGINCOUNTTIME to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Begin Countdown (NS)"]).
                 }
             } ELSE IF _VEHICLECONFIG = "Calypso Dock" {
                 // Docking Code Here
-                IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
-                    global _BEGINCOUNTTIME to _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"].
-                } ELSE {
-                    global _BEGINCOUNTTIME to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Begin Countdown (NS)"]).
-                }
+                GLOBAL _BEGINCOUNTTIME is round(_LAUNCHWINDOW(_VESSELTARGET)).
             }
 
 
@@ -88,6 +92,8 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
         IF _LAUNCHMOUNT = "KSC 39a" {
             set _GND_TOWER to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["TOWER"])[0].
             set _GND_BASE to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["BASE"])[0].
+        } ELSE IF _LAUNCHMOUNT = "CCSFS 40" {
+            set _GND_WDS to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["WDS"])[0].
         }
     }
 
@@ -140,7 +146,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _S2_PLF to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLF"])[1].
             global _S2_PLS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLS"])[0].
             global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
-    } ELSE IF _VEHICLECONFIG = "Calypso Dock" {
+    } ELSE IF _VEHICLECONFIG = "Calypso Dock" and ship:status = "PRELAUNCH" {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
             global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
@@ -167,7 +173,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
             global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
             global _CC_DCK to ship:partstagged(_CALYPSOTAGS["APAS"])[0].
-    } ELSE IF _VEHICLECONFIG = "Calypso Tour" {
+    } ELSE IF _VEHICLECONFIG = "Calypso Tour" and ship:status = "PRELAUNCH" {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
             global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
@@ -193,10 +199,29 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _CC_HSH to ship:partstagged(_CALYPSOTAGS["HEATSHIELD"])[0].
             global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
             global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
+    } ELSE IF _VEHICLECONFIG = "Calypso Dock" and ship:status = not "PRELAUNCH" {
+        // Calypso
+            global _CC_CPU to ship:partstagged(_CALYPSOTAGS["CPU"])[0].
+            // global _CC_DEC to ship:partstagged(_CALYPSOTAGS["DECOUPLER"])[0].
+            global _CC_TRK to ship:partstagged(_CALYPSOTAGS["TRUNK"])[0].
+            global _CC_CAP to ship:partstagged(_CALYPSOTAGS["CAPSULE"])[0].
+            global _CC_HSH to ship:partstagged(_CALYPSOTAGS["HEATSHIELD"])[0].
+            global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
+            global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
+            global _CC_DCK to ship:partstagged(_CALYPSOTAGS["APAS"])[0].
+    } ELSE IF _VEHICLECONFIG = "Calypso Tour" and ship:status = not "PRELAUNCH" {
+        // Calypso
+            global _CC_CPU to ship:partstagged(_CALYPSOTAGS["CPU"])[0].
+            // global _CC_DEC to ship:partstagged(_CALYPSOTAGS["DECOUPLER"])[0].
+            global _CC_TRK to ship:partstagged(_CALYPSOTAGS["TRUNK"])[0].
+            global _CC_CAP to ship:partstagged(_CALYPSOTAGS["CAPSULE"])[0].
+            global _CC_HSH to ship:partstagged(_CALYPSOTAGS["HEATSHIELD"])[0].
+            global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
+            global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
     }
 
     // Extra Variables
-        GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")). // Shutdown point for stage 1 ascent (meco)
+        IF missionTime < 60 {GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")).} // Shutdown point for stage 1 ascent (meco)
         IF _VEHICLECONFIG = "Phoebe Heavy" {global _SIDEBOOSTERS_ATTACHED is true. set _SHUTDOWNFUELSIDEBOOSTERS to 4950.} // This sets side boosters attachment state for use in separation
         ELSE {set _SIDEBOOSTERS_ATTACHED to false.}
 
@@ -336,7 +361,9 @@ GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
     } ELSE IF _CURRENTTIME = _TIME_SIDECOREIGNITE and _VEHICLECONFIG = "Phoebe Heavy" { // Heavy on 39a
         _ECU("SIDE BOOSTERS", "Startup").
     } ELSE IF _CURRENTTIME = _TIME_WATERDELUGE and _LAUNCHMOUNT = "KSC 39a" { // Phoebe / Calypso on 39a
-        _WATERDELUGE("Startup").
+        _WATERDELUGE(_LAUNCHMOUNT, "Startup").
+    } ELSE IF _CURRENTTIME = _TIME_WATERDELUGE and _LAUNCHMOUNT = "CCSFS 40" { // Phoebe / Calypso on 40
+        _WATERDELUGE(_LAUNCHMOUNT, "Startup").
     } ELSE IF _CURRENTTIME = _TIME_COREIGNITION {
         _ECU("STAGE 1", "Startup").
         _ECUTHROTTLE(100).
@@ -362,45 +389,66 @@ GLOBAL FUNCTION _STRONGBACKACTIONS { // Controls for vehicle strongback
                 _GND_STRONGBACK:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true).
             }
         } ELSE IF _ACTION = "Start Fueling" {
-            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Start Fueling") {
-                _GND_STRONGBACK:getmodulebyindex(11):doaction("Start Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Start Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(10):doaction("Start Fueling", true).
             }
         } ELSE IF _ACTION = "Stop Fueling" {
-            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Stop Fueling") {
-                _GND_STRONGBACK:getmodulebyindex(11):doaction("Stop Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Stop Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(10):doaction("Stop Fueling", true).
             }
         } ELSE IF _ACTION = "Start Generator" {
-            IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Enable Power Generator") {
-                _GND_STRONGBACK:getmodulebyindex(10):doaction("Enable Power Generator", true).
+            IF _GND_STRONGBACK:getmodulebyindex(9):hasaction("Enable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(9):doaction("Enable Power Generator", true).
             }
         } ELSE IF _ACTION = "Stop Generator" {
-           IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Disable Power Generator") {
-                _GND_STRONGBACK:getmodulebyindex(10):doaction("Disable Power Generator", true).
+           IF _GND_STRONGBACK:getmodulebyindex(9):hasaction("Disable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(9):doaction("Disable Power Generator", true).
            }
         }
     } ELSE IF _LAUNCHMOUNT = "KSC 39a" {
         IF _ACTION = "Retract" {
-            _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doaction("Toggle", true).
+            IF _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):hasaction("Toggle") {
+                _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doaction("Toggle", true).
+            }
+            
         } ELSE IF _ACTION = "Revert" {
-            _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doaction("Toggle", true).
+            IF _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):hasaction("Toggle") {
+                _GND_STRONGBACK:getmodule("ModuleAnimateGeneric"):doaction("Toggle", true).
+            }
         } ELSE IF _ACTION = "Release" {
-            _GND_STRONGBACK:getmodule("LaunchClamp"):doaction("Release Clamp", true).
+            IF _GND_STRONGBACK:getmodule("LaunchClamp"):hasaction("Release Clamp") {
+                _GND_STRONGBACK:getmodule("LaunchClamp"):doaction("Release Clamp", true).
+            }
         } ELSE IF _ACTION = "Start Fueling" {
-            _GND_STRONGBACK:getmodulebyindex(13):doaction("Start Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(12):hasaction("Start Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(12):doaction("Start Fueling", true).
+            }
         } ELSE IF _ACTION = "Stop Fueling" {
-            _GND_STRONGBACK:getmodulebyindex(13):doaction("Stop Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(12):hasaction("Stop Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(12):doaction("Stop Fueling", true).
+            }
         } ELSE IF _ACTION = "Start Generator" {
-            _GND_STRONGBACK:getmodulebyindex(12):doaction("Enable Power Generator", true).
+            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Enable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(11):doaction("Enable Power Generator", true).
+            }
         } ELSE IF _ACTION = "Stop Generator" {
-            _GND_STRONGBACK:getmodulebyindex(12):doaction("Disable Power Generator", true).
+            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Disable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(11):doaction("Disable Power Generator", true).
+            }
         }
     } ELSE IF _LAUNCHMOUNT = "Falcon 1.1" {
         IF _ACTION = "Retract" {
-            _GND_STRONGBACK:getmodule("moduleanimategeneric"):doaction("Toggle", true).
+            IF _GND_STRONGBACK:getmodule("moduleanimategeneric"):hasaction("Toggle") {
+                _GND_STRONGBACK:getmodule("moduleanimategeneric"):doaction("Toggle", true).
+            }
         } ELSE IF _ACTION = "Revert" {
-            _GND_STRONGBACK:getmodule("moduleanimategeneric"):doaction("Toggle", true).
+            IF _GND_STRONGBACK:getmodule("moduleanimategeneric"):hasaction("Toggle") {
+                _GND_STRONGBACK:getmodule("moduleanimategeneric"):doaction("Toggle", true).
+            }
         } ELSE IF _ACTION = "Release" {
-            _GND_STRONGBACK:getmodule("launchclamp"):doaction("Release Clamp", true).
+            IF _GND_STRONGBACK:getmodule("launchclamp"):hasaction("Release Clamp") {
+                _GND_STRONGBACK:getmodule("launchclamp"):doaction("Release Clamp", true).
+            }
         } 
     }
 }
@@ -416,16 +464,50 @@ GLOBAL FUNCTION _TOWERACTIONS { // Crew arm actions on 39a/40 crews
 }
 
 GLOBAL FUNCTION _WATERDELUGE { // Water Deluge System on pad 39a
-    parameter _ACTION.
+    parameter _PAD, _ACTION.
 
-    IF _ACTION = "Startup" {
-        _GND_BASE:getmodule("ModuleEnginesFX"):doaction("Activate Engine", true).
-    } ELSE IF _ACTION = "Shutdown" {
-        _GND_BASE:getmodule("ModuleEnginesFX"):doaction("Shutdown Engine", true).
+    IF _PAD = "KSC 39a" {
+        IF _ACTION = "Startup" {
+            _GND_BASE:getmodule("ModuleEnginesFX"):doaction("Activate Engine", true).
+        } ELSE IF _ACTION = "Shutdown" {
+            _GND_BASE:getmodule("ModuleEnginesFX"):doaction("Shutdown Engine", true).
+        }
+    } ELSE IF _PAD = "CCSFS 40" {
+        IF _ACTION = "Startup" {
+            IF _GND_WDS:getmodule("ModuleEnginesFX"):hasaction("toggle engine") {
+                _GND_WDS:getmodule("ModuleEnginesFX"):doaction("toggle engine", true).
+            }
+        } ELSE IF _ACTION = "Shutdown" {
+            IF _GND_WDS:getmodule("ModuleEnginesFX"):hasaction("toggle engine") {
+                _GND_WDS:getmodule("ModuleEnginesFX"):doaction("toggle engine", true).
+            }
+        }
     }
+    
+
+           
 }
 
+GLOBAL FUNCTION _LAUNCHWINDOW { // Timed launch window for Calypso / Target docking missions
+    PARAMETER _TARGET.
 
+    LOCAL _LAT is ship:latitude.
+    LOCAL _ECLIPTIC_NORM is vCrs(_TARGET:OBT:VELOCITY:ORBIT, _TARGET:BODY:POSITION - _TARGET:POSITION):NORMALIZED.
+    LOCAL _PLANET_NORM is heading(0, _LAT):VECTOR.
+    LOCAL _BODYINCLINE is vAng(_PLANET_NORM, _ECLIPTIC_NORM). // Finds the inclination on the variables above
+    LOCAL _BETA is arcCos(max(-1, min(1, cos(_BODYINCLINE) * SIN(_LAT) / sin(_BODYINCLINE)))).
+    LOCAL _INTERSECT_DIR is vCrs(_PLANET_NORM, _ECLIPTIC_NORM):normalized.
+    LOCAL _INTERSECT_POS is -vxcl(_PLANET_NORM, _ECLIPTIC_NORM):normalized.
+
+    LOCAL _LAUNCHTIME_DIR is (_INTERSECT_DIR * sin(_BETA) + _INTERSECT_POS * cos(_BETA)) * cos(_LAT) + sin(_LAT) * _PLANET_NORM.
+    LOCAL _LAUNCHTIME is vAng(_LAUNCHTIME_DIR, ship:position - body:position) / 360 * body:rotationperiod.
+
+    IF vCrs(_LAUNCHTIME_DIR, ship:position - body:position) * _PLANET_NORM < 0 {
+        set _LAUNCHTIME to body:rotationperiod - _LAUNCHTIME.
+    }
+
+    RETURN time:Seconds + _LAUNCHTIME. // Value for countdown
+}
 
 
 // ------------------------
@@ -532,15 +614,21 @@ GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and de
     global _RTLS_PROPELLANT is 2500. // 600 KM Max RTLS Apogee
     global _EXPD_PROPELLANT is 10. // Expended booster
 
-    IF _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT { // Any orbit above 600km
+    IF _RECOVERY_METHOD = "ASDS" {
+        return _ASDS_PROPELLANT. 
+    } ELSE IF _RECOVERY_METHOD = "RTLS" {
+        return _RTLS_PROPELLANT.
+    } ELSE IF _RECOVERY_METHOD = "EXPD" { 
+        return _EXPD_PROPELLANT.
+    } ELSE IF _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT and _RECOVERY_METHOD = false { // Any orbit above 600km
         return _ASDS_PROPELLANT.
-    } ELSE IF _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Any orbit under 600km
+    } ELSE IF _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" and _RECOVERY_METHOD = false { // Any orbit under 600km
         return _RTLS_PROPELLANT.
     } ELSE IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" { // Always ASDS for crew (fuel margin is safe)
         return _ASDS_PROPELLANT.
-    } ELSE IF _APOGEETARGET > 1200000 {
+    } ELSE IF _APOGEETARGET > 1200000 and _RECOVERY_METHOD = false {
         return _EXPD_PROPELLANT.
-    } 
+    }
 }
 
 GLOBAL FUNCTION _SENDABORTCALYPSO { // Sends commands to each stage to abort & separates calypso

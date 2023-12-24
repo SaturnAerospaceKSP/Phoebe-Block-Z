@@ -24,6 +24,7 @@ GLOBAL FUNCTION _CPUINIT { // Initialisation of the ground CPU & preparation for
     _DEFINESETTINGS(). // Defines mission settings and configuration
     _DEFINEPARTS(). // Defines all vehicle parts based on configuration setting 
     _STRONGBACKACTIONS("Start Generator"). // Starts power feed to Phoebe
+    
 
     IF _BEGINCOUNTTIME < _TIME_PHOEBEFUELSTART {_STRONGBACKACTIONS("Start Fueling").} // Starts fueling of Phoebe (Stage 1, then Stage 2)
     
@@ -39,24 +40,45 @@ GLOBAL FUNCTION _COUNTDOWNSEQUENCE { // Primary Countdown Function
     parameter _TIMETOSTART.
     set _TMINUSCLOCK to _TIMETOSTART. // Assigns function parameter to a variable to be used
 
-    until missionTime = 1 {
-        _HOLDCHECKER(_TMINUSCLOCK). // Continuously Checks for a automatic / manual hold
-        _LAUNCHVALIDITY(_TMINUSCLOCK). // Repeatedly looks for issues with vehicle and informs MCC
-        _COUNTDOWNEVENTSACTION(_TMINUSCLOCK). // Events for the countdown
+    until missionTime = 1 { // For non rendezvous timed launches
+        IF _VEHICLECONFIG = "Calypso Tour" or _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Phoebe Heavy" {
+            _HOLDCHECKER(_TMINUSCLOCK). // Continuously Checks for a automatic / manual hold
+            _LAUNCHVALIDITY(_TMINUSCLOCK). // Repeatedly looks for issues with vehicle and informs MCC
+            _COUNTDOWNEVENTSACTION(_TMINUSCLOCK). // Events for the countdown
 
-        print "T-" + _FORMATSECONDS(_TMINUSCLOCK) + "       " at (1,0). // Prints to the terminal
-        IF missionTime < 1 {
-            log "T-" + _FORMATSECONDS(_TMINUSCLOCK) to "0:/Data/Phoebe/mission_Time.txt". // Log T Minus to OBS
+            // Stream
+                print "T-" + _FORMATSECONDS(_TMINUSCLOCK) + "       " at (1,0). // Prints to the terminal
+
+                IF missionTime < 1 {
+                    log "T-" + _FORMATSECONDS(_TMINUSCLOCK) to "0:/Data/Phoebe/mission_Time.txt". // Log T Minus to OBS
+                }
+
+            // Countdown Logic
+                IF _TMINUSCLOCK > kuniverse:realworldtime { // IF the unix time is in the future, it will use that rather than a normal countdown
+                    set _TMINUSCLOCK to _TMINUSCLOCK - kuniverse:realworldtime.
+                } ELSE IF _TMINUSCLOCK = 0 or _TMINUSCLOCK < kuniverse:realworldtime {
+                    set _TMINUSCLOCK to _TMINUSCLOCK - 1. // Counts down the clock
+                } 
+
+            wait 1. 
+        } ELSE IF _VEHICLECONFIG = "Calypso Dock" { // For Timed T-0
+            _HOLDCHECKER(_TMINUSCLOCK). // Continuously Checks for a automatic / manual hold
+            _LAUNCHVALIDITY(_TMINUSCLOCK). // Repeatedly looks for issues with vehicle and informs MCC
+            _COUNTDOWNEVENTSACTION(_TMINUSCLOCK). // Events for the countdown
+
+            // Stream
+                print "T- " + _FORMATSECONDS(_TMINUSCLOCK) + "       " at (1,0).
+
+                IF missionTime < 1 {
+                    log "T-" + _FORMATSECONDS(_TMINUSCLOCK) to "0:/Data/Phoebe/mission_Time.txt".
+                }
+
+            // Countdown Logic
+                set _TMINUSCLOCK to round(_LAUNCHWINDOW(_VESSELTARGET) - time:seconds).
+
+            wait 1.
         }
 
-        IF _TMINUSCLOCK > kuniverse:realworldtime { // IF the unix time is in the future, it will use that rather than a normal countdown
-            set _TMINUSCLOCK to _TMINUSCLOCK - kuniverse:realworldtime.
-        } ELSE {
-            set _TMINUSCLOCK to _TMINUSCLOCK - 1. // Counts down the clock
-        }
-
-        GLOBAL _INTERCOMMUNICATIONS_TMINUS is _TMINUSCLOCK.
-        wait 1. 
     }
 
     shutdown. // Shuts down ground CPU so that it is not using any power on pad / prevents issues

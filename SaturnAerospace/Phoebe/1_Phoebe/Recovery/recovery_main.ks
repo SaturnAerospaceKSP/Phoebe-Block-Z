@@ -216,25 +216,26 @@ GLOBAL FUNCTION _LANDINGBURNRTLS {
         UNTIL _TRUERADAR <= (_STOPDISTANCE - _BOOSTER_ALTOFFSET + 100) {lock steering to _STEERTOLZ(). print _TRUERADAR at (10, 13). wait 0.} // Wait until suicide burn altitude#
         lock steering to _STEERTOLZ().
         lock throttle to (_BURNTHROTTLE + 0.4). // Start Suicide Burn
-        set _MAXAOA to -7. // Inverted AOA for landing burn
+        set _MAXAOA to -6. // Inverted AOA for landing burn
         set _ERRORSCALING to 1.2. // Slower Guidance
         
 
     // Landing Gear
         IF addons:tr:hasimpact {
-            WHEN alt:radar < 400 then {set _MAXAOA to -1.5.}
+            WHEN alt:radar < 400 then {set _MAXAOA to -1.}
             WHEN alt:radar < 200 then {_DEPLOYLANDINGLEGS(). set _MAXAOA to -0.75.}
         } 
 
     // One Engine Switch
         UNTIL ship:verticalspeed >= -50 {wait 0.}
         _ECU("STAGE 1", "Next Mode").
-        set _MAXAOA to -1.
+
+        set steeringManager:rollts to 20. // Limit roll to stop spasm
+        LOCK STEERING TO HEADING(_FINAL_LANDING_TARGET:HEADING, 89). // Lock to point slightly toward LZ
         set _ERRORSCALING to 1.
         lock throttle to (_BURNTHROTTLE + 0.3).
 
     // Final Landing Sector
-        IF _TRUERADAR < 80 {lock steering to heading(90,90). set _MAXAOA to 0.}
         UNTIL ship:verticalspeed >= -0.01 {wait 0.}
 
     // Shutdown
@@ -266,6 +267,8 @@ GLOBAL FUNCTION _LANDINGBURNASDS {
     // One Engine Switch
         UNTIL ship:verticalspeed >= -35 {wait 0.}
         _ECU("STAGE 1", "Next Mode").
+        
+        set steeringManager:rollts to 20. // Limit roll to stop spasm
         set _MAXAOA to -0.5.
         lock throttle to (_BURNTHROTTLE + 0.4).
 

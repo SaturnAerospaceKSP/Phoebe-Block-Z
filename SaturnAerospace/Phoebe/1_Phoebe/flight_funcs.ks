@@ -131,7 +131,7 @@ GLOBAL FUNCTION _PAYLOADSEPARATION { // Deploys payload(s) into orbit after flig
         until _PAYLOADSDEPLOYED = _PAYLOADCOUNT {
             stage. // Separates 
 
-            wait 4. // 4 Seconds between each separation
+            wait 5. // 4 Seconds between each separation
             set _PAYLOADSDEPLOYED to _PAYLOADSDEPLOYED + 1. /// Quasy Quasy Quasy if you see this the code is still a copy
         }
     } ELSE {
@@ -142,6 +142,9 @@ GLOBAL FUNCTION _PAYLOADSEPARATION { // Deploys payload(s) into orbit after flig
 GLOBAL FUNCTION _ORBITSHUTDOWNPROCEDURE { // Shuts down unneccesary things and deorbits S2 if applicable
     
 }
+
+
+
 
 
 

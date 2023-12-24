@@ -161,6 +161,15 @@ GLOBAL FUNCTION _ISBOOSTER { // Sets a booster to a tag and helps select booster
     } ELSE {return false.}
 }
 
+
+
+
+
+
+
+
+
+
 // ----------------------
 //  Other Functions
 // ----------------------
@@ -264,12 +273,15 @@ GLOBAL FUNCTION _SOOTTEXTURE {
 
 
 
+
+
+
 // -------------------
 //  COMMUNICATIONS
 // -------------------
 
 GLOBAL FUNCTION _PROCESS_COMMCOMMANDS {
-    WHEN NOT ship:messages:empty then {
+    WHEN not ship:messages:empty then {
         set _MSGRECIEVED to ship:messages:pop.
 
         set _CMD to _MSGRECIEVED:content[0].
@@ -291,6 +303,16 @@ GLOBAL FUNCTION _SEND_VESSELMESSAGE {
     set _C to _V:connection.
     _C:SENDMESSAGE(MSG).
 }
+
+
+
+
+
+
+
+
+
+
 
 
 // -------------------------------

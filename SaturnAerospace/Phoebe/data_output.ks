@@ -88,7 +88,10 @@ GLOBAL FUNCTION _DATALOGGING {
         print "|───[VEHICLE]───────────────────────" at (0,7).
         print "| MASS: " + round(ship:mass, 1) + " (T)   " at (0,8).
         print "| THRUST: " + round(ship:availablethrust, 1) + " (KN)   " at (0,9).
-        print "| AIRSPEED: " + round(ship:airspeed, 1) + " (M/S)   " at (0,10).
+
+        if ship:altitude < body:atm:height {print "| MACH: " + round(sqrt(2 / 1.4 * ship:q / body:atm:altitudepressure(altitude)), 3) + " (MACH)   " at (0,10).}
+        else {print "| AIRSPEED: " + round(airspeed, 3) + " (M/S)   " at (0,10).}
+
         print "| ALTITUDE: " + round(ship:altitude / 1000, 1) + " (KM)   " at (0,11).
         print "| THROTTLE: " + round(throttle * 100, 3) + " (%)   " at (0,12).
         print "| PITCH: " + round(90 - vectorAngle(ship:up:forevector, ship:facing:forevector), 3) + " (Deg)   " at (0,13).
