@@ -49,6 +49,27 @@ GLOBAL FUNCTION _DATAOUTPUTCHECKER {
         deletePath("0:/Data/Phoebe/stage2_propellant.txt").
         log "N/A" to "0:/Data/Phoebe/stage2_propellant.txt".
     }
+
+
+
+    // DATA LOGS for specific flights
+        LOCAL _BASE_DIRECTORY is "0:/Data/Phoebe/Flights". // Sets the base directory to this position
+
+        IF NOT(EXISTS(_BASE_DIRECTORY)) {CREATEDIR(_BASE_DIRECTORY).} // If the folder doesn't exist, make it
+        CD(_BASE_DIRECTORY). // Set the default directory as this
+
+        LIST FILES in _BASE_DIRECTORY_FILE_LIST.
+
+        GLOBAL _THIS_FLIGHT_NUMBER is _BASE_DIRECTORY_FILE_LIST:length + 1. // Add 1 to the flight number as the past is obviously lower
+        LOCAL _FLIGHT_LOG_DIRECTORY is _BASE_DIRECTORY + "/Flight " + _THIS_FLIGHT_NUMBER. // Create folder with flight number
+
+        IF NOT(EXISTS(_FLIGHT_LOG_DIRECTORY)) {CREATEDIR(_FLIGHT_LOG_DIRECTORY).} // If it doesnt exist, make it
+
+    // Now create files that'll be inside each flight
+        GLOBAL _DATA_DIRECTORY is _FLIGHT_LOG_DIRECTORY + "/FLIGHT_" + _THIS_FLIGHT_NUMBER + "_DATA.CSV".
+        LOG "FLIGHT: " + _THIS_FLIGHT_NUMBER + " DATA LOGGING SHEET" to _DATA_DIRECTORY.
+
+        SET _INIT_START_TIME to TIME. // Sets start time to ksp time
 }
 
 GLOBAL FUNCTION _DATALOGGING {
@@ -56,6 +77,7 @@ GLOBAL FUNCTION _DATALOGGING {
     log floor(ship:altitude / 1000, 1) to "0:/Data/Phoebe/vehicle_alt.txt". // Altitude in km
     _GETVEHICLEFUEL("STAGE 1").
     _GETVEHICLEFUEL("STAGE 2").
+
     IF _VEHICLECONFIG = "Phoebe Heavy" {_GETVEHICLEFUEL("SIDE BOOSTERS").}
 
     set STAGE1_PROPELLANT to _STAGE1LFCURRENT + _STAGE1OXCURRENT.
@@ -69,10 +91,10 @@ GLOBAL FUNCTION _DATALOGGING {
         set SIDEBOOSTER_CAPACITY to _SIDEBOOSTERSLFCAPACITY + _SIDEBOOSTERSOXCAPACITY.
     }
 
-    IF _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
+    IF _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Calypso" {
         log round((STAGE1_PROPELLANT / STAGE1_CAPACITY) * 100, 1) + "%" to "0:/Data/Phoebe/stage1_propellant.txt". // Logs the Liquid Fuel for Stream
     } ELSE IF _VEHICLECONFIG = "Phoebe Heavy" {
-        log round(((STAGE1_PROPELLANT + SIDEBOOSTER_PROPELLANT) / (STAGE1_CAPACITY + SIDEBOOSTER_CAPACITY)) * 100, 1) + "%" to "0:/Data/stage1_propellant.txt".
+        log round(((STAGE1_PROPELLANT + SIDEBOOSTER_PROPELLANT) / (STAGE1_CAPACITY + SIDEBOOSTER_CAPACITY)) * 100, 1) + "%" to "0:/Data/Phoebe/stage1_propellant.txt".
     }
 
     log round((STAGE2_PROPELLANT / STAGE2_CAPACITY) * 100, 1) + "%" to "0:/Data/Phoebe/stage2_propellant.txt". // Logs the Oxidizer for Stream
@@ -102,12 +124,15 @@ GLOBAL FUNCTION _DATALOGGING {
         print "| LNG COORDS: " + round(longitude, 3) + "   " at (0,18).
         print "| LAT COORDS: " + round(latitude, 3) + "   " at (0,19).
         print "|───────────────────────────────────" at (0,20).
+        print "| DATA FILE: " + "FLIGHT " + _THIS_FLIGHT_NUMBER at (0,21).
         
         if missionTime > 0 {
             log "T+" + _FORMATSECONDS(missionTime) to "0:/Data/Phoebe/mission_Time.txt". // Logs T+ time
+
+            log round(missionTime) + ", " + round(ship:altitude, 4) + ", " + round(ship:latitude, 4) + ", " + round(ship:longitude, 4) + ", " + round(ship:apoapsis, 4) + ", " + round(ship:periapsis, 4) + ", " + round(ship:mass, 4) to _DATA_DIRECTORY. // Log to CSV
         }
  // 39x17
-    wait 0.15. 
+    wait 0.075. 
 }
 
 GLOBAL FUNCTION _DATAFLIGHT {

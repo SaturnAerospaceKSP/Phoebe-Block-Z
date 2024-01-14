@@ -33,6 +33,9 @@ GLOBAL FUNCTION _CPUINIT {
 }
 
 
+
+
+
 // -----------------------
 //      Main Section
 // -----------------------
@@ -40,9 +43,12 @@ GLOBAL FUNCTION _CPUINIT {
 GLOBAL FUNCTION _SIDEBOOSTERRECOVERY {
     wait 2.
 
-    set _THROTT to 0.
+    // set _THROTT to 0.
     lock throttle to _THROTT.
     rcs on.
+
+    _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
+    _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
 
     UNTIL _LOOPING = false {
         IF _ISBOOSTER("B1") {
@@ -96,6 +102,16 @@ GLOBAL FUNCTION _SIDEBOOSTERRECOVERY {
     
 }
 
+
+
+
+
+
+
+
+
+
+
 // --------------------------
 //  Sequence Functions
 // --------------------------
@@ -104,59 +120,85 @@ GLOBAL FUNCTION _BOOSTER_SEPARATION {
     IF _ISBOOSTER("B1") {
         set _LANDING_TGT to _BOOSTER1_LZ.
         set _THROTT to 0.
+
+        wait 2.
         set ship:name to "Booster 1".
 
-        kuniverse:forcesetactivevessel(SHIP).
-        
+        kuniverse:forcesetactivevessel(ship).
+        wait 1.
     } ELSE IF _ISBOOSTER("B2") {
         set _LANDING_TGT to _BOOSTER2_LZ.
         set _THROTT to 0.
+
+        wait 2.
         set ship:name to "Booster 2".
     }
 }
 
 GLOBAL FUNCTION _BOOSTER_1 {
+    set ship:name to "Booster 1".
+    
     set _COMM_TARGETVESSEL to vessel("Booster 2").
     _BOOSTER_STEERTOLZ(_BOOSTER_ADJUSTPITCH, _BOOSTER_ADJUSTLAT, _BOOSTER_ADJUSTLNG).
 
-    _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
-    _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
-
-    wait 5.
+    wait 10.
     set _THROTT to 1.
 }
 
 GLOBAL FUNCTION _BOOSTER_2 {
+    set ship:name to "Booster 2".
+
     until _DONE = 0 {
-        _PROCESS_COMMCOMMANDS().
+        _PROCESS_COMMCOMMANDS(). // Listens for commands from opposing booster
 
-        _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
-        _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
+        lock steering to _COPY_VESSELHEADING("Booster 1"). // Copies other heading from booster
+        lock throttle to _THROTT. // Throttle value
 
-        lock steering to _COPY_VESSELHEADING("Booster 1").
-        lock throttle to _THROTT.
+        wait 0.01.
     }
+
+    set _THROTT to 0.
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -----------------------
+//  RECOVERY FUNCTIONS
+// -----------------------
+
 GLOBAL FUNCTION _BOOSTBACK_B1 {
-    UNTIL _IMPACTDIST < 500 {
+    UNTIL _IMPACTDIST < 2500 {
         _BOOSTER_STEERTOLZ(_BOOSTER_ADJUSTPITCH, _BOOSTER_ADJUSTLAT, _BOOSTER_ADJUSTLNG).
+
+        print _COMM_TARGETVESSEL at (5,5). // Debug
 
         IF (_IMPACTDIST < 20000) {
             set _THROTT to 0.5.
-            _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTTLE", _THROTT)).
+            _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", 0.5)).
         } ELSE {
             set _THROTT to 1.
 
             IF _ISBOOSTER("B1") {
-                _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTTLE", _THROTT)).
+                _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", 1)).
             }
         }
     }
 
-    IF _IMPACTDIST < 580 {_SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTTLE", 0)).}
+    IF _IMPACTDIST < 3000 {_SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", 0)).}
 
-    IF _IMPACTDIST < 500 {
+    IF _IMPACTDIST < 2900 {
         set _THROTT to 0.
         wait 1.
 
@@ -178,6 +220,7 @@ GLOBAL FUNCTION _ENTRYBURN {
 
     set steeringManager:torqueepsilonmax to 0.04. // Steering fixes for rcs bug
     set steeringManager:torqueepsilonmin to 0.008. 
+    set steeringManager:maxstoppingtime to 0.1. // Slow Steering
 
     UNTIL ship:verticalspeed < 100 {wait 0.}
 
@@ -253,4 +296,45 @@ GLOBAL FUNCTION _SINGLE_LANDING {
         _HOVER_STEERINGUPDATE("Engine").
 
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -------------------
+//  COMMUNICATIONS
+// -------------------
+
+GLOBAL FUNCTION _PROCESS_COMMCOMMANDS {
+    IF not ship:messages:empty {
+        set _MSGRECIEVED to ship:messages:pop.
+
+        set _CMD to _MSGRECIEVED:content[0].
+        set _VAL to _MSGRECIEVED:content[1].
+
+        IF (_CMD = "THROTT") {
+            set _THROTT to _VAL.
+        }
+
+        IF (_CMD = "DONE") {
+            set _DONE to _VAL.
+        }
+    }
+}
+
+GLOBAL FUNCTION _SEND_VESSELMESSAGE {
+    parameter _VESSELTGT, MSG.
+
+    set _SENDMESSAGE to MSG.
+    set _CONNECTION to _VESSELTGT:connection.
+    _CONNECTION:SENDMESSAGE(_SENDMESSAGE).
 }

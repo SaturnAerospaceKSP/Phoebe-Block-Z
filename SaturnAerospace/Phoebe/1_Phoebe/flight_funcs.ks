@@ -128,6 +128,7 @@ GLOBAL FUNCTION _PAYLOADSEPARATION { // Deploys payload(s) into orbit after flig
     } ELSE IF _FAIRINGS_ATTACHED = false and _PAYLOADCOUNT > 1 {
         set _PAYLOADSDEPLOYED to 0.
 
+        toggle ag8. // Can be toggled for further stage activation
         until _PAYLOADSDEPLOYED = _PAYLOADCOUNT {
             stage. // Separates 
 
@@ -156,18 +157,23 @@ GLOBAL FUNCTION _HEADINGANDPITCHCONTROL {
     parameter _STAGE.
 
     IF _STAGE = "STAGE 1" { // GRAVITY TURN
-        GLOBAL _HEADING_CONTROL is LAZcalc(_AZIMUTHCALCULATION). // Heading Azimuth to stay on correct inclination
-        GLOBAL _PITCH_CONTROL is max(_GRAVITYTURN_ENDANGLE, 90 * (1 - ship:altitude / _GRAVITYTURN_ENDALTITUDE)). // Pitchover, meets end angle at end altitude
+        set _HEADING_CONTROL to LAZcalc(_AZIMUTHCALCULATION). // Heading Azimuth to stay on correct inclination
+        set _PITCH_CONTROL to max(_GRAVITYTURN_ENDANGLE, 90 * (1 - ship:altitude / _GRAVITYTURN_ENDALTITUDE)). // Pitchover, meets end angle at end altitude
     } ELSE IF _STAGE = "STAGE 2" { // OPEN / CLOSED / TERMINAL GUIDANCE
-        GLOBAL _APOAPSISOFFSET is ship:apoapsis - body:atm:height. // Works on guidance from the Target Apoapsis
-        GLOBAL _HALVEDETA is 15 - eta:apoapsis. 
+        IF _APOGEETARGET > body:atm:height + 20000 {
+            set _APOAPSISOFFSET to ship:apoapsis - body:atm:height. // Works on guidance from the Start of earth's space border
+        } ELSE {
+            set _APOAPSISOFFSET to ship:apoapsis - _APOGEETARGET. // Use the apogee for insertion altitude
+        }
 
-        GLOBAL _HEADING_CONTROL is LAZcalc(_AZIMUTHCALCULATION). // Azimuth like stage 1 for correct incline
-        GLOBAL _PITCH_CONTROL is (_HALVEDETA * 2) + ((_APOAPSISOFFSET / 5000) * 10). // Controls vehicle pitch to finish on target
+        set _HALVEDETA to 15 - eta:apoapsis. 
+
+        set _HEADING_CONTROL to LAZcalc(_AZIMUTHCALCULATION). // Azimuth like stage 1 for correct incline
+        set _PITCH_CONTROL to (_HALVEDETA * 2) + ((_APOAPSISOFFSET / 5000) * 10). // Controls vehicle pitch to finish on target
 
         print "HEAD TGT: " + _HEADING_CONTROL at (10, 10).
         print "PITCH TGT: " + _PITCH_CONTROL at (10, 11).
-    }
+    }   
 }
 
 GLOBAL FUNCTION _ORBITALVELOCITYPERIGEE {

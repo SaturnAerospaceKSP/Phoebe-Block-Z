@@ -1,6 +1,6 @@
 clearScreen.
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
-print "Waiting For AG6 To Be Pressed..." at (10, 10).
+print "Waiting For AG6 To Be Pressed..." at (2, 10).
 set terminal:width to 40.
 set terminal:height to 12.
 

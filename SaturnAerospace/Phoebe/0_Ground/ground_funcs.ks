@@ -10,13 +10,27 @@
 GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
     // _MISSIONSETTINGS
         set ship:name to _MISSIONSETTINGS["Mission Name"].
+        global _NAMEOFSHIP to _MISSIONSETTINGS["Mission Name"].
         global _LAUNCHMOUNT to _MISSIONSETTINGS["Launch Mount"].
         global _VEHICLECONFIG to _MISSIONSETTINGS["Payload Type"].
 
-        IF _MISSIONSETTINGS["Target Vessel"] = false {
-            global _VESSELTARGET to "".
+        IF _MISSIONSETTINGS["Target Vessel"] = "None" {  
+            global _VESSELTARGET to false.
         } ELSE {
-            global _VESSELTARGET to vessel(_MISSIONSETTINGS["Target Vessel"]).
+            global _VESSELTARGET to true.
+
+            IF _MISSIONSETTINGS["Target Vessel"] = Moon or _TARGET_SPACECRAFT = Mars or _TARGET_SPACECRAFT = Saturn {
+                global _TARGET_SPACECRAFT to _MISSIONSETTINGS["Target Vessel"].
+            } ELSE { 
+                global _TARGET_SPACECRAFT to vessel(_MISSIONSETTINGS["Target Vessel"]).
+            }
+        }
+
+        IF _MISSIONSETTINGS["Target Body"] = "None" {
+            global _BODYTARGET to false.
+        } ELSE {
+            global _BODYTARGET to true. // Has a body target
+            global _INTER_PLANAR_TARGET to _MISSIONSETTINGS["Target Body"]. // Sets the value as the planet target 
         }
     
         global _PAYLOADCOUNT to _MISSIONSETTINGS["Payload Count"].
@@ -26,6 +40,10 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         global _APOGEETARGET to _MISSIONSETTINGS["Apogee"] * 1000.
         global _PERIGEETARGET to _MISSIONSETTINGS["Perigee"] * 1000.
         global _INCLINETARGET to _MISSIONSETTINGS["Incline"].
+
+        // IF _VESSELTARGET = true { // Changing vehicle inclination based on target
+        //     set _INCLINETARGET to _TARGET_SPACECRAFT:obt:inclination.
+        // }
 
         global _RECOVERY_METHOD to _MISSIONSETTINGS["FORCE RECOVERY"].
 
@@ -62,15 +80,15 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         GLOBAL _AZIMUTHCALCULATION is LAZcalc_init(_APOGEETARGET, _INCLINETARGET). // Creates a heading from the Apogee and inclination targets
 
         // Count Begin
-            IF _VEHICLECONFIG = "Calypso Tour" or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Logic for no docking code
+            IF _VESSELTARGET = false { // Logic for no docking code
                 IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
                     global _BEGINCOUNTTIME to round(_COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] - kuniverse:realworldtime).
                 } ELSE {
                     global _BEGINCOUNTTIME to _FORMATLEXICONTIME(_COUNTDOWNEVENTS["Begin Countdown (NS)"]).
                 }
-            } ELSE IF _VEHICLECONFIG = "Calypso Dock" {
+            } ELSE IF _VESSELTARGET = true {
                 // Docking Code Here
-                GLOBAL _BEGINCOUNTTIME is round(_LAUNCHWINDOW(_VESSELTARGET)).
+                GLOBAL _BEGINCOUNTTIME is round(_LAUNCHWINDOW(_TARGET_SPACECRAFT)).
             }
 
 
@@ -97,7 +115,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
         }
     }
 
-    IF _VEHICLECONFIG = "Phoebe" {
+    IF not _RECOVERY_METHOD = "EXPD" and _VEHICLECONFIG = "Phoebe" {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
             global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
@@ -107,7 +125,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _S1_LEG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["LEGS"])[3].
             global _S1_FIN to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["FINS"])[3].
             global _S1_FTS to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["FTS"])[0].
-        
+
         // Stage 2
             global _S2_CPU to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["CPU"])[0].
             global _S2_ENG to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["ENGINE"])[0].
@@ -116,7 +134,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _S2_PLF to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLF"])[1].
             global _S2_PLS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLS"])[0].
             global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
-    } ELSE IF _VEHICLECONFIG = "Phoebe Heavy" {
+    } ELSE IF not _RECOVERY_METHOD = "EXPD" and _VEHICLECONFIG = "Phoebe Heavy" {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
             global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
@@ -146,7 +164,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _S2_PLF to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLF"])[1].
             global _S2_PLS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLS"])[0].
             global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
-    } ELSE IF _VEHICLECONFIG = "Calypso Dock" and ship:status = "PRELAUNCH" {
+    } ELSE IF _VEHICLECONFIG = "Calypso" and missionTime < 10 {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
             global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
@@ -173,33 +191,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
             global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
             global _CC_DCK to ship:partstagged(_CALYPSOTAGS["APAS"])[0].
-    } ELSE IF _VEHICLECONFIG = "Calypso Tour" and ship:status = "PRELAUNCH" {
-        // Stage 1
-            global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
-            global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
-            global _S1_TNK to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["TANK"])[0].
-            global _S1_DEC to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["DECOUPLER"])[0].
-            global _S1_CGT to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CGTs"])[1].
-            global _S1_LEG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["LEGS"])[3].
-            global _S1_FIN to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["FINS"])[3].
-            global _S1_FTS to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["FTS"])[0].
-        
-        // Stage 2
-            global _S2_CPU to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["CPU"])[0].
-            global _S2_ENG to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["ENGINE"])[0].
-            global _S2_TNK to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["TANK"])[0].
-            global _S2_RCS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["RCS"])[1].
-            global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
-        
-        // Calypso
-            global _CC_CPU to ship:partstagged(_CALYPSOTAGS["CPU"])[0].
-            global _CC_DEC to ship:partstagged(_CALYPSOTAGS["DECOUPLER"])[0].
-            global _CC_TRK to ship:partstagged(_CALYPSOTAGS["TRUNK"])[0].
-            global _CC_CAP to ship:partstagged(_CALYPSOTAGS["CAPSULE"])[0].
-            global _CC_HSH to ship:partstagged(_CALYPSOTAGS["HEATSHIELD"])[0].
-            global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
-            global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
-    } ELSE IF _VEHICLECONFIG = "Calypso Dock" and ship:status = not "PRELAUNCH" {
+    } ELSE IF _VEHICLECONFIG = "Calypso" and missionTime > 10 {
         // Calypso
             global _CC_CPU to ship:partstagged(_CALYPSOTAGS["CPU"])[0].
             // global _CC_DEC to ship:partstagged(_CALYPSOTAGS["DECOUPLER"])[0].
@@ -209,24 +201,64 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
             global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
             global _CC_DCK to ship:partstagged(_CALYPSOTAGS["APAS"])[0].
-    } ELSE IF _VEHICLECONFIG = "Calypso Tour" and ship:status = not "PRELAUNCH" {
-        // Calypso
-            global _CC_CPU to ship:partstagged(_CALYPSOTAGS["CPU"])[0].
-            // global _CC_DEC to ship:partstagged(_CALYPSOTAGS["DECOUPLER"])[0].
-            global _CC_TRK to ship:partstagged(_CALYPSOTAGS["TRUNK"])[0].
-            global _CC_CAP to ship:partstagged(_CALYPSOTAGS["CAPSULE"])[0].
-            global _CC_HSH to ship:partstagged(_CALYPSOTAGS["HEATSHIELD"])[0].
-            global _CC_MPD to ship:partstagged(_CALYPSOTAGS["MAINS"])[0].
-            global _CC_DPD to ship:partstagged(_CALYPSOTAGS["DROGUES"])[0].
+    } ELSE IF _RECOVERY_METHOD = "EXPD" and _VEHICLECONFIG = "Phoebe Heavy" {
+        // Stage 1
+            global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
+            global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
+            global _S1_TNK to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["TANK"])[0].
+            global _S1_DEC to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["DECOUPLER"])[0].
+            global _S1_FTS to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["FTS"])[0].
+        
+        // Side Boosters
+            global _SB_CPU to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["CPU"])[1].
+            global _SB_ENG to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["ENGINE"])[1].
+            global _SB_TNK to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["TANK"])[1].
+            global _SB_DEC to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["DECOUPLER"])[1].
+            global _SB_CGT to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["CGT"])[3].
+            global _SB_LEG to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["LEGS"])[7].
+            global _SB_FIN to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["FINS"])[7].
+            global _SB_NSE to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["NOSE"])[1].
+            global _SB_FTS to ship:partstagged(_PHOEBETAGS["SIDE BOOSTERS"]["FTS"])[1].
+
+        // Stage 2
+            global _S2_CPU to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["CPU"])[0].
+            global _S2_ENG to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["ENGINE"])[0].
+            global _S2_TNK to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["TANK"])[0].
+            global _S2_RCS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["RCS"])[1].
+            global _S2_PLF to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLF"])[1].
+            global _S2_PLS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLS"])[0].
+            global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
+    } ELSE IF _RECOVERY_METHOD = "EXPD" and _VEHICLECONFIG = "Phoebe" {
+        // Stage 1
+            global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
+            global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
+            global _S1_TNK to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["TANK"])[0].
+            global _S1_DEC to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["DECOUPLER"])[0].
+            global _S1_FTS to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["FTS"])[0].
+
+        // Stage 2
+            global _S2_CPU to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["CPU"])[0].
+            global _S2_ENG to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["ENGINE"])[0].
+            global _S2_TNK to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["TANK"])[0].
+            global _S2_RCS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["RCS"])[1].
+            global _S2_PLF to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLF"])[1].
+            global _S2_PLS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLS"])[0].
+            global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
     }
 
     // Extra Variables
-        IF missionTime < 60 {GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")).} // Shutdown point for stage 1 ascent (meco)
+        IF alt:radar < 10000 {GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")).} // Shutdown point for stage 1 ascent (meco)
         IF _VEHICLECONFIG = "Phoebe Heavy" {global _SIDEBOOSTERS_ATTACHED is true. set _SHUTDOWNFUELSIDEBOOSTERS to 4950.} // This sets side boosters attachment state for use in separation
         ELSE {set _SIDEBOOSTERS_ATTACHED to false.}
 
     // Define Parts Complete
 }
+
+GLOBAL FUNCTION _DEFINEPLANET { // If there is a target body, we set this up
+    set target to _INTER_PLANAR_TARGET.
+}
+
+
 
 
 
@@ -298,6 +330,10 @@ GLOBAL FUNCTION _ECU { // Engine Control Unit
 
 
 
+
+
+
+
 // ------------------------
 //     Countdown 
 // ------------------------
@@ -314,6 +350,7 @@ GLOBAL FUNCTION _HOLDCHECKER { // Checks for holds & aborts
                 ag9 off.
                 ag6 off.
                 set _TMINUS to _HOLDTIME.
+                _STRONGBACKACTIONS("Stop Fueling"). // Temporarily hold fueling procedure
 
                 IF _HOLDTIME < _TIME_LASTABORT {clearScreen. _GROUNDSAFEPROCEDURE(_CURRENTTIME).} 
                 ELSE IF _TMINUS >= _TIME_LASTABORT {
@@ -328,7 +365,9 @@ GLOBAL FUNCTION _HOLDCHECKER { // Checks for holds & aborts
                         if ag10 {clearScreen. _GROUNDSAFEPROCEDURE(_CURRENTTIME).}
                         wait 0.
                     }
+                    _STRONGBACKACTIONS("Start Fueling").
 
+                    IF _TMINUSCLOCK > kuniverse:realworldtime {set _TMINUS to _TMINUSCLOCK - kuniverse:realworldtime.}
                     clearscreen.
                 }
             }
@@ -343,14 +382,14 @@ GLOBAL FUNCTION _HOLDCHECKER { // Checks for holds & aborts
 GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
     parameter _CURRENTTIME.
 
-    IF _CURRENTTIME = _TIME_CREWARMRETRACT and _VEHICLECONFIG = "Calypso Dock" or _CURRENTTIME = _TIME_CREWARMRETRACT and _VEHICLECONFIG = "Calypso Tour" {
+    IF _CURRENTTIME = _TIME_CREWARMRETRACT and _VEHICLECONFIG = "Calypso" {
         _TOWERACTIONS("Toggle Arm").
-    } ELSE IF _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso Dock" or _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso Tour" {
+    } ELSE IF _CURRENTTIME = _TIME_CALYPSOSTARTUP and _VEHICLECONFIG = "Calypso" {
         _CALYPSOCOMMANDCORE:SENDMESSAGE("Initialise Calypso"). // Sends a command to begin startup on Calypso & Internal Work
     } ELSE IF _CURRENTTIME = _TIME_PHOEBEHEAVYFUELSTART and _VEHICLECONFIG = "Phoebe Heavy" {
         _STRONGBACKACTIONS("Start Fueling"). // Phoebe Heavy Fueling Procedure takes longer and starts at 35 minutes
-    } ELSE IF _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Phoebe" or _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Calypso Dock" or _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Calypso Tour" { 
-        _STRONGBACKACTIONS("Start Fueling"). // Phoebe / Calypso, starts at 26 minutes
+    } ELSE IF _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Phoebe" or _CURRENTTIME = _TIME_PHOEBEFUELSTART and _VEHICLECONFIG = "Calypso" { 
+        _STRONGBACKACTIONS("Start Fueling"). // Phoebe / Calypso, starts at 25 minutes
     } ELSE IF _CURRENTTIME = _TIME_INTERNALPOWER {
         _STRONGBACKACTIONS("Stop Generator").
     } ELSE IF _CURRENTTIME = _TIME_STRONGBACKRETRACT {
@@ -367,7 +406,7 @@ GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
     } ELSE IF _CURRENTTIME = _TIME_COREIGNITION {
         _ECU("STAGE 1", "Startup").
         _ECUTHROTTLE(100).
-    } ELSE IF _CURRENTTIME = 0 {
+    } ELSE IF _CURRENTTIME < 1 {
         _STAGE2COMMANDCORE:SENDMESSAGE("Run Stage 2"). // Sends the S1 CPU a command to run
         _STRONGBACKACTIONS("Release"). 
     }
@@ -464,13 +503,17 @@ GLOBAL FUNCTION _TOWERACTIONS { // Crew arm actions on 39a/40 crews
 }
 
 GLOBAL FUNCTION _WATERDELUGE { // Water Deluge System on pad 39a
-    parameter _PAD, _ACTION.
+    parameter _PAD, _ACTION is "Shutdown".
 
     IF _PAD = "KSC 39a" {
         IF _ACTION = "Startup" {
-            _GND_BASE:getmodule("ModuleEnginesFX"):doaction("Activate Engine", true).
+            IF _GND_BASE:getmodule("ModuleEnginesFX"):hasevent("Activate Engine") {
+                _GND_BASE:getmodule("ModuleEnginesFX"):doevent("Activate Engine").
+            }
         } ELSE IF _ACTION = "Shutdown" {
-            _GND_BASE:getmodule("ModuleEnginesFX"):doaction("Shutdown Engine", true).
+            IF _GND_BASE:getmodule("ModuleEnginesFX"):hasevent("Shutdown Engine") {
+                _GND_BASE:getmodule("ModuleEnginesFX"):doevent("Shutdown Engine").
+            }
         }
     } ELSE IF _PAD = "CCSFS 40" {
         IF _ACTION = "Startup" {
@@ -493,21 +536,26 @@ GLOBAL FUNCTION _LAUNCHWINDOW { // Timed launch window for Calypso / Target dock
 
     LOCAL _LAT is ship:latitude.
     LOCAL _ECLIPTIC_NORM is vCrs(_TARGET:OBT:VELOCITY:ORBIT, _TARGET:BODY:POSITION - _TARGET:POSITION):NORMALIZED.
-    LOCAL _PLANET_NORM is heading(0, _LAT):VECTOR.
+    LOCAL _PLANET_NORM is heading(_TARGET_SPACECRAFT:obt:inclination - ship:obt:inclination, _LAT):VECTOR.
     LOCAL _BODYINCLINE is vAng(_PLANET_NORM, _ECLIPTIC_NORM). // Finds the inclination on the variables above
     LOCAL _BETA is arcCos(max(-1, min(1, cos(_BODYINCLINE) * SIN(_LAT) / sin(_BODYINCLINE)))).
     LOCAL _INTERSECT_DIR is vCrs(_PLANET_NORM, _ECLIPTIC_NORM):normalized.
     LOCAL _INTERSECT_POS is -vxcl(_PLANET_NORM, _ECLIPTIC_NORM):normalized.
 
     LOCAL _LAUNCHTIME_DIR is (_INTERSECT_DIR * sin(_BETA) + _INTERSECT_POS * cos(_BETA)) * cos(_LAT) + sin(_LAT) * _PLANET_NORM.
-    LOCAL _LAUNCHTIME is vAng(_LAUNCHTIME_DIR, ship:position - body:position) / 360 * body:rotationperiod.
+    LOCAL _LAUNCHTIME is vAng(_LAUNCHTIME_DIR, ship:position - body:position) / 360 * body:rotationperiod. 
 
     IF vCrs(_LAUNCHTIME_DIR, ship:position - body:position) * _PLANET_NORM < 0 {
         set _LAUNCHTIME to body:rotationperiod - _LAUNCHTIME.
     }
 
-    RETURN time:Seconds + _LAUNCHTIME. // Value for countdown
+    RETURN time:Seconds + _LAUNCHTIME. // Value for countdown 
 }
+
+
+
+
+
 
 
 // ------------------------
@@ -610,9 +658,9 @@ GLOBAL FUNCTION _GETVEHICLEFUEL { // Returns fuel and capacity of vehicle
 GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and decides recovery method
     parameter _CURRENTPROPELLANT.
 
-    global _ASDS_PROPELLANT is 1850. // Anything Above 600KM Apogee
-    global _RTLS_PROPELLANT is 2500. // 600 KM Max RTLS Apogee
-    global _EXPD_PROPELLANT is 10. // Expended booster
+    global _ASDS_PROPELLANT is 1900. // Anything Above 600KM Apogee - 1900 default
+    global _RTLS_PROPELLANT is 2600. // 600 KM Max RTLS Apogee - 2600 default
+    global _EXPD_PROPELLANT is 2. // Expended booster
 
     IF _RECOVERY_METHOD = "ASDS" {
         return _ASDS_PROPELLANT. 
@@ -620,13 +668,13 @@ GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and de
         return _RTLS_PROPELLANT.
     } ELSE IF _RECOVERY_METHOD = "EXPD" { 
         return _EXPD_PROPELLANT.
-    } ELSE IF _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT and _RECOVERY_METHOD = false { // Any orbit above 600km
+    } ELSE IF _RECOVERY_METHOD = false and _APOGEETARGET >= 600000 and _PERIGEETARGET < 1200000 and _CURRENTPROPELLANT <= _ASDS_PROPELLANT { // Any orbit above 600km
         return _ASDS_PROPELLANT.
-    } ELSE IF _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" and _RECOVERY_METHOD = false { // Any orbit under 600km
+    } ELSE IF _RECOVERY_METHOD = false and _APOGEETARGET < 600000 and _CURRENTPROPELLANT <= _RTLS_PROPELLANT or _VEHICLECONFIG = "Phoebe Heavy" or _VEHICLECONFIG = "Phoebe" { // Any orbit under 600km
         return _RTLS_PROPELLANT.
-    } ELSE IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" { // Always ASDS for crew (fuel margin is safe)
+    } ELSE IF _RECOVERY_METHOD = false and _VEHICLECONFIG = "Calypso" { // Always ASDS for crew (fuel margin is safe)
         return _ASDS_PROPELLANT.
-    } ELSE IF _APOGEETARGET > 1200000 and _RECOVERY_METHOD = false {
+    } ELSE IF _RECOVERY_METHOD = false and _APOGEETARGET > 1200000 {
         return _EXPD_PROPELLANT.
     }
 }
@@ -656,6 +704,11 @@ GLOBAL FUNCTION _FLIGHTTERMINATIONSYSTEM { // FTS System (self destruct) NEEDS T
         _SB_FTS:getmodule("TacselfDestruct"):doaction("Detonate Parent!", true).
     }
 }
+
+
+
+
+
 
 
 

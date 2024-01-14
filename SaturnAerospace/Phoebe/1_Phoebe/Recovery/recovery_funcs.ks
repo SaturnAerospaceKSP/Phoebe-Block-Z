@@ -64,6 +64,7 @@ GLOBAL FUNCTION _CALCDISTANCE {
 GLOBAL FUNCTION _GETIMPACT {
     IF addons:tr:hasimpact {
         return addons:tr:impactpos.
+        // return ship:position + (ship:velocity:surface:mag * addons:tr:timetillimpact - 3).
     }
 
     return ship:geoPosition.
@@ -82,5 +83,5 @@ GLOBAL FUNCTION _STEERTOLZ {
         set _RESULT to _VELOCITYVECTOR:normalized + tan(_MAXAOA) * _ERRORVECTOR:normalized.
     }
 
-    return lookDirUp(_RESULT * 1, facing:topvector).
+    return lookDirUp(_RESULT, facing:topvector).
 }

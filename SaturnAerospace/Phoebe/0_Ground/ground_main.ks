@@ -23,13 +23,14 @@ GLOBAL FUNCTION _CPUINIT { // Initialisation of the ground CPU & preparation for
 
     _DEFINESETTINGS(). // Defines mission settings and configuration
     _DEFINEPARTS(). // Defines all vehicle parts based on configuration setting 
+    IF _BODYTARGET {_DEFINEPLANET().} // Only if we have a target
+
     _STRONGBACKACTIONS("Start Generator"). // Starts power feed to Phoebe
-    
 
     IF _BEGINCOUNTTIME < _TIME_PHOEBEFUELSTART {_STRONGBACKACTIONS("Start Fueling").} // Starts fueling of Phoebe (Stage 1, then Stage 2)
     
     GLOBAL _STAGE2COMMANDCORE is _S2_CPU:getmodule("kOSProcessor"):connection. // Used to send messages to Stage 2 (Main CPU)
-    IF _VEHICLECONFIG = "Calypso Dock" or _VEHICLECONFIG = "Calypso Tour" {
+    IF _VEHICLECONFIG = "Calypso" {
         GLOBAL _CALYPSOCOMMANDCORE is _CC_CPU:getmodule("kOSProcessor"):connection. // Connects directly to Calypso for preparation
     }
 
@@ -41,7 +42,7 @@ GLOBAL FUNCTION _COUNTDOWNSEQUENCE { // Primary Countdown Function
     set _TMINUSCLOCK to _TIMETOSTART. // Assigns function parameter to a variable to be used
 
     until missionTime = 1 { // For non rendezvous timed launches
-        IF _VEHICLECONFIG = "Calypso Tour" or _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Phoebe Heavy" {
+        IF _VESSELTARGET = false { // "" is a replacement for false due to kos string oddness
             _HOLDCHECKER(_TMINUSCLOCK). // Continuously Checks for a automatic / manual hold
             _LAUNCHVALIDITY(_TMINUSCLOCK). // Repeatedly looks for issues with vehicle and informs MCC
             _COUNTDOWNEVENTSACTION(_TMINUSCLOCK). // Events for the countdown
@@ -57,11 +58,11 @@ GLOBAL FUNCTION _COUNTDOWNSEQUENCE { // Primary Countdown Function
                 IF _TMINUSCLOCK > kuniverse:realworldtime { // IF the unix time is in the future, it will use that rather than a normal countdown
                     set _TMINUSCLOCK to _TMINUSCLOCK - kuniverse:realworldtime.
                 } ELSE IF _TMINUSCLOCK = 0 or _TMINUSCLOCK < kuniverse:realworldtime {
-                    set _TMINUSCLOCK to _TMINUSCLOCK - 1. // Counts down the clock
+                    set _TMINUSCLOCK to _TMINUSCLOCK - 0.5. // Counts down the clock
                 } 
 
-            wait 1. 
-        } ELSE IF _VEHICLECONFIG = "Calypso Dock" { // For Timed T-0
+            wait 0.5. 
+        } ELSE IF _VESSELTARGET = true{ // For Timed T-0  |  "" is a replacement for false due to kos string oddness
             _HOLDCHECKER(_TMINUSCLOCK). // Continuously Checks for a automatic / manual hold
             _LAUNCHVALIDITY(_TMINUSCLOCK). // Repeatedly looks for issues with vehicle and informs MCC
             _COUNTDOWNEVENTSACTION(_TMINUSCLOCK). // Events for the countdown
@@ -74,9 +75,9 @@ GLOBAL FUNCTION _COUNTDOWNSEQUENCE { // Primary Countdown Function
                 }
 
             // Countdown Logic
-                set _TMINUSCLOCK to round(_LAUNCHWINDOW(_VESSELTARGET) - time:seconds).
+                set _TMINUSCLOCK to round(_LAUNCHWINDOW(_TARGET_SPACECRAFT) - time:seconds).
 
-            wait 1.
+            wait 0.5.
         }
 
     }

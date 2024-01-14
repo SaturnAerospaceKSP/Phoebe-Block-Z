@@ -25,10 +25,13 @@ GLOBAL FUNCTION _SETUPVARIABLES {
         set steeringManager:rollts to 5. // Roll Speed
         set _BOOSTER_LANDMODE to true. // Landing? 
         set _LOOPING to true. // Looping for functions
+        set _DONE to 1. // For checking the vehicle is finished recovering (1 = not done, 0 = done)
         set _STEERINGDIR to 90. // Initial Steering Direction
         set _GEODIST to 1. // Baseline Variable
         set _ERRORSCALING to 1. // Error Correction amount (higher = more corrections)
         set _AOA to 0. // Angle Of Attack Limit
+
+        global _THROTT is 0. // Definition of the throttle variable
 
     // Suicide
         set _G to constant:g * body:mass / body:radius ^ 2.
@@ -158,7 +161,9 @@ GLOBAL FUNCTION _ISBOOSTER { // Sets a booster to a tag and helps select booster
 
     IF _BOOSTERTAG:LENGTH > 0 {
         return true.
-    } ELSE {return false.}
+    } ELSE IF _BOOSTERTAG:LENGTH = 0 or _BOOSTERTAG:LENGTH < 0 {
+        return false.
+    }
 }
 
 
@@ -267,45 +272,6 @@ GLOBAL FUNCTION _SOOTTEXTURE {
             } 
         } 
 }
-
-
-
-
-
-
-
-
-
-// -------------------
-//  COMMUNICATIONS
-// -------------------
-
-GLOBAL FUNCTION _PROCESS_COMMCOMMANDS {
-    WHEN not ship:messages:empty then {
-        set _MSGRECIEVED to ship:messages:pop.
-
-        set _CMD to _MSGRECIEVED:content[0].
-        set _VAL to _MSGRECIEVED:content[1].
-
-        IF (_CMD = "THROTTLE") {
-            set _THROTT to _VAL.
-        }
-
-        IF (_CMD = "DONE") {
-            set _DONE to _VAL.
-        }
-    }
-}
-
-GLOBAL FUNCTION _SEND_VESSELMESSAGE {
-    parameter _V, MSG.
-
-    set _C to _V:connection.
-    _C:SENDMESSAGE(MSG).
-}
-
-
-
 
 
 

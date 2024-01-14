@@ -6,10 +6,10 @@ until false {
     set _MSGRECIEVED to core:messages:pop. // Assigns variable to message recieved
     set _DECODEDMSG to _MSGRECIEVED:content. // Stores message in a decoded format
 
-    if _DECODEDMSG = "Initialise Recovery" {    
+    if _DECODEDMSG = "Initialise Recovery" {        
+        rcs on.
         lock steering to ship:facing.
         wait 2.
-        rcs on.
         runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe/Recovery/recovery_main.ks"). // Runs path of recieved message
     } 
 }
