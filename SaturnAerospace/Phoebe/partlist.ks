@@ -12,8 +12,8 @@ GLOBAL _GROUNDTAGS IS LEXICON(
         "CPU", "GND_CPU",
         "STRONGBACK", "GND_TE",
         "TOWER", "GND_TOWER",
-        "BASE", "GND_BASE", 
-        "WDS", "GND_WDS"
+        "BASE", "GND_BASE"
+        // "WDS", "GND_WDS"
     )
 ).
 
