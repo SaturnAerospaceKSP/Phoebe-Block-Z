@@ -31,7 +31,7 @@ GLOBAL FUNCTION _GET_DISTANCE { // Distance to desired craft
 // -----------------------
 
 GLOBAL FUNCTION _EXECUTE_NODE { // Executes any node created by kOS or the user (not only used by Calypso )
-    PARAMETER _MAXTHRUST is ship:maxthrust, _ISRCS is false, _CTRLFACE is "REAR", _NODETOL is 1.5. // Either Fore Or Top for CTRL Face
+    PARAMETER _MAXTHRUST is ship:maxthrust, _ISRCS is false, _CTRLFACE is "REAR", _NODETOL is 0.3. // Either Fore Or Top for CTRL Face
 
     set ship:control:neutralize to true.
     rcs off.

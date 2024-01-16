@@ -79,6 +79,8 @@ GLOBAL FUNCTION _PHOEBEFLIGHTMAIN {
 
 GLOBAL FUNCTION _PHASE1_TOWERCLEAR { // Liftoff - gravity turn start speed
     // local _VEHICLEUP is facing. // Sets the current facing to a variable
+    SET _STAGE_1_CONTROL TO TRUE.
+    SET _STAGE_2_CONTROL TO FALSE. 
 
     lock steering to _STEER_TARGET. // Steers up from the pad
     _ECUTHROTTLE(100). // 100% Throttle
@@ -173,6 +175,8 @@ GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate a
         _RCSCU("FORE", "STAGE 2", "OFF"). // Ullage Complete
 
         wait 2. // Final Settle Time
+        SET _STAGE_1_CONTROL TO FALSE.
+        SET _STAGE_2_CONTROL TO TRUE.
 }
 
 

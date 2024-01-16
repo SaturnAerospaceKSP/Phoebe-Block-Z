@@ -19,7 +19,7 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         } ELSE {
             global _VESSELTARGET to true.
 
-            IF _MISSIONSETTINGS["Target Vessel"] = Moon or _TARGET_SPACECRAFT = Mars or _TARGET_SPACECRAFT = Saturn {
+            IF _MISSIONSETTINGS["Target Vessel"] = Moon or  _MISSIONSETTINGS["Target Vessel"] = Mars or  _MISSIONSETTINGS["Target Vessel"] = Saturn {
                 global _TARGET_SPACECRAFT to _MISSIONSETTINGS["Target Vessel"].
             } ELSE { 
                 global _TARGET_SPACECRAFT to vessel(_MISSIONSETTINGS["Target Vessel"]).
@@ -79,6 +79,9 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         GLOBAL _GOFORLAUNCH IS TRUE. // Are We (by default) GO FOR LAUNCH 
         GLOBAL _AZIMUTHCALCULATION is LAZcalc_init(_APOGEETARGET, _INCLINETARGET). // Creates a heading from the Apogee and inclination targets
 
+        GLOBAL _STAGE_1_CONTROL IS FALSE. // For stage 1 and it's gravity turn
+        GLOBAL _STAGE_2_CONTROL IS FALSE. // For stage 2 and is toggled when stage 2 is controlling the script
+
         // Count Begin
             IF _VESSELTARGET = false { // Logic for no docking code
                 IF _COUNTDOWNEVENTS["Begin Countdown (UNIX)"]["UNIX"] > kuniverse:realworldtime {
@@ -111,11 +114,11 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             set _GND_TOWER to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["TOWER"])[0].
             set _GND_BASE to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["BASE"])[0].
         } ELSE IF _LAUNCHMOUNT = "CCSFS 40" {
-            // set _GND_WDS to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["WDS"])[0].
+            set _GND_WDS to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["WDS"])[0].
         }
     }
 
-    IF not _RECOVERY_METHOD = "EXPD" and _VEHICLECONFIG = "Phoebe" {
+    IF _RECOVERY_METHOD = "RTLS" or _RECOVERY_METHOD = "ASDS" and _VEHICLECONFIG = "Phoebe" {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
             global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
@@ -134,7 +137,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             global _S2_PLF to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLF"])[1].
             global _S2_PLS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["PLS"])[0].
             global _S2_FTS to ship:partstagged(_PHOEBETAGS["SECOND STAGE"]["FTS"])[0].
-    } ELSE IF not _RECOVERY_METHOD = "EXPD" and _VEHICLECONFIG = "Phoebe Heavy" {
+    } ELSE IF _RECOVERY_METHOD = "RTLS" or _RECOVERY_METHOD = "ASDS" and _VEHICLECONFIG = "Phoebe Heavy" {
         // Stage 1
             global _S1_CPU to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["CPU"])[0].
             global _S1_ENG to ship:partstagged(_PHOEBETAGS["FIRST STAGE"]["ENGINE"])[0].
@@ -247,7 +250,8 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
     }
 
     // Extra Variables
-        IF alt:radar < 10000 {GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")).} // Shutdown point for stage 1 ascent (meco)
+        IF not _STAGE_2_CONTROL {GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")).} // Shutdown point for stage 1 ascent (meco) (center core too)
+
         IF _VEHICLECONFIG = "Phoebe Heavy" {global _SIDEBOOSTERS_ATTACHED is true. set _SHUTDOWNFUELSIDEBOOSTERS to 4950.} // This sets side boosters attachment state for use in separation
         ELSE {set _SIDEBOOSTERS_ATTACHED to false.}
 
