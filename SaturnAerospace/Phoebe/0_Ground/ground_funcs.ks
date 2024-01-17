@@ -114,7 +114,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             set _GND_TOWER to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["TOWER"])[0].
             set _GND_BASE to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["BASE"])[0].
         } ELSE IF _LAUNCHMOUNT = "CCSFS 40" {
-            set _GND_WDS to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["WDS"])[0].
+            //set _GND_WDS to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["WDS"])[0].
         }
     }
 
@@ -406,7 +406,7 @@ GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
     } ELSE IF _CURRENTTIME = _TIME_WATERDELUGE and _LAUNCHMOUNT = "KSC 39a" { // Phoebe / Calypso on 39a
         _WATERDELUGE(_LAUNCHMOUNT, "Startup").
     } ELSE IF _CURRENTTIME = _TIME_WATERDELUGE and _LAUNCHMOUNT = "CCSFS 40" { // Phoebe / Calypso on 40
-        _WATERDELUGE(_LAUNCHMOUNT, "Startup").
+        //_WATERDELUGE(_LAUNCHMOUNT, "Startup").
     } ELSE IF _CURRENTTIME = _TIME_COREIGNITION {
         _ECU("STAGE 1", "Startup").
         _ECUTHROTTLE(100).
