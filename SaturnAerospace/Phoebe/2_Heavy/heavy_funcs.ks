@@ -8,22 +8,11 @@
 // ------------------------
 
 GLOBAL FUNCTION _SETUPVARIABLES {
-    // Landing Zones
-        set _BOOSTER1_LZ to latlng(28.2140920160773, -80.3049028987299).
-        set _BOOSTER2_LZ to latlng(28.2152200476183, -80.3108388947316).
-        set _LANDINGBURN_ALT to 1900.
-
-    // Booster Offset
-        set _BOOSTER1_RDROFFSET to 24.5.
-        set _BOOSTER2_RDROFFSET to 24.5. // Offset on altitude for the booster
-        set _BOOSTER_ADJUSTPITCH to 10. // Adjust Pitch 
-        set _BOOSTER_ADJUSTLAT to 0. // Latitude offset 
-        set _BOOSTER_ADJUSTLNG to -0.25. // Sets overshooting distance
-
     // Variables
         set steeringManager:maxstoppingtime to 5. // Turn Speed
         set steeringManager:rollts to 5. // Roll Speed
         set _BOOSTER_LANDMODE to true. // Landing? 
+        set _CONTROLPART to 1. // Which part controlling
         set _LOOPING to true. // Looping for functions
         set _DONE to 1. // For checking the vehicle is finished recovering (1 = not done, 0 = done)
         set _STEERINGDIR to 90. // Initial Steering Direction

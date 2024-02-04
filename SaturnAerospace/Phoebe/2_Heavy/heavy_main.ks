@@ -25,10 +25,28 @@ GLOBAL FUNCTION _CPUINIT {
     set config:ipu to 2000. // CPU speed
 
     // _GETVEHICLEFUEL("SIDE BOOSTERS"). // Gets side booster fuel
-    _SETUPVARIABLES(). // Grabs variables for Phoebe Heavy Recovery
+
+    // Landing Zones
+        set _BOOSTER1_LZ to latlng(28.2140920160773, -80.3049028987299).
+        set _BOOSTER2_LZ to latlng(28.2152200476183, -80.3108388947316).
+        set _LANDINGBURN_ALT to 1900.
+
+    // Booster Offset
+        set _BOOSTER1_RDROFFSET to 24.5.
+        set _BOOSTER2_RDROFFSET to 24.5. // Offset on altitude for the booster
+        set _BOOSTER_ADJUSTPITCH to 10. // Adjust Pitch 
+        set _BOOSTER_ADJUSTLAT to 0. // Latitude offset 
+        set _BOOSTER_ADJUSTLNG to -0.25. // Sets overshooting distance
 
     _BOOSTER_SEPARATION(). // Separation of boosters and craft assignment
+
+    _SETUPVARIABLES(). // Grabs variables for Phoebe Heavy Recovery
     _SET_TRUERADAR(). // Sets offset for boosters
+
+    _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
+    _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
+
+    lock throttle to _THROTT.
     _SIDEBOOSTERRECOVERY(). // Run Script
 }
 
@@ -44,14 +62,14 @@ GLOBAL FUNCTION _SIDEBOOSTERRECOVERY {
     wait 2.
 
     // set _THROTT to 0.
-    lock throttle to _THROTT.
     rcs on.
 
-    _ECU("SIDE BOOSTERS", "STARTUP"). // Enables engines
-    _ECU("SIDE BOOSTERS", "NEXT MODE"). // 3 Engine Burn
+    UNTIL _LOOPING = false {    
+        _PROCESS_COMMCOMMANDS(). // Processes Communications from dominant booster
 
-    UNTIL _LOOPING = false {
         IF _ISBOOSTER("B1") {
+            lock throttle to _THROTT.
+
             _BOOSTER_1().
             _BOOSTBACK_B1().
             _ENTRYBURN().
@@ -67,6 +85,8 @@ GLOBAL FUNCTION _SIDEBOOSTERRECOVERY {
             wait 10.
             shutdown.
         } ELSE IF _ISBOOSTER("B2") {
+            lock throttle to _THROTT.
+
             _BOOSTER_2().
             _ENTRYBURN().
             _GLIDE().
@@ -96,7 +116,6 @@ GLOBAL FUNCTION _SIDEBOOSTERRECOVERY {
             preserve.
         }
 
-        _PROCESS_COMMCOMMANDS(). // Processes Communications from dominant booster
         wait 0.1.
     }
     
@@ -141,23 +160,22 @@ GLOBAL FUNCTION _BOOSTER_1 {
     set _COMM_TARGETVESSEL to vessel("Booster 2").
     _BOOSTER_STEERTOLZ(_BOOSTER_ADJUSTPITCH, _BOOSTER_ADJUSTLAT, _BOOSTER_ADJUSTLNG).
 
-    wait 10.
+    wait 14.
     set _THROTT to 1.
 }
 
 GLOBAL FUNCTION _BOOSTER_2 {
-    set ship:name to "Booster 2".
-
     until _DONE = 0 {
         _PROCESS_COMMCOMMANDS(). // Listens for commands from opposing booster
 
         lock steering to _COPY_VESSELHEADING("Booster 1"). // Copies other heading from booster
         lock throttle to _THROTT. // Throttle value
 
-        wait 0.01.
+        wait 0.1.
     }
 
     set _THROTT to 0.
+    _ECU("SIDE BOOSTERS", "SHUTDOWN"). // Enables engines
 }
 
 
@@ -186,28 +204,35 @@ GLOBAL FUNCTION _BOOSTBACK_B1 {
 
         IF (_IMPACTDIST < 20000) {
             set _THROTT to 0.5.
-            _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", 0.5)).
-        } ELSE {
+
+            IF _ISBOOSTER("B1") {
+                _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", _THROTT)).
+            }
+        } ELSE IF (_IMPACTDIST > 20000) {
             set _THROTT to 1.
 
             IF _ISBOOSTER("B1") {
-                _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", 1)).
+                _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", _THROTT)).
             }
         }
     }
 
-    IF _IMPACTDIST < 3000 {_SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", 0)).}
+    IF _IMPACTDIST < 2900 {_SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("THROTT", 0)).}
 
     IF _IMPACTDIST < 2900 {
         set _THROTT to 0.
         wait 1.
 
         IF _ISBOOSTER("B1") {
-            IF _BOOSTER_LANDMODE {
-                _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("DONE", 0)).
-                kuniverse:forcesetactivevessel(_COMM_TARGETVESSEL).
+            wait 0.1.
+            _SEND_VESSELMESSAGE(_COMM_TARGETVESSEL, list("DONE", 0)).
+            kuniverse:forcesetactivevessel(_COMM_TARGETVESSEL).
 
-                wait 2.
+            wait 2.
+        } IF _ISBOOSTER("B2") {
+            if _DONE {
+                set _THROTT to 0.
+                kuniverse:forcesetactivevessel(_COMM_TARGETVESSEL).
             }
         }
     }
@@ -315,7 +340,7 @@ GLOBAL FUNCTION _SINGLE_LANDING {
 // -------------------
 
 GLOBAL FUNCTION _PROCESS_COMMCOMMANDS {
-    IF not ship:messages:empty {
+    WHEN NOT ship:messages:empty THEN {
         set _MSGRECIEVED to ship:messages:pop.
 
         set _CMD to _MSGRECIEVED:content[0].
@@ -332,9 +357,10 @@ GLOBAL FUNCTION _PROCESS_COMMCOMMANDS {
 }
 
 GLOBAL FUNCTION _SEND_VESSELMESSAGE {
-    parameter _VESSELTGT, MSG.
+    parameter _VESSELTGT.
+    parameter _MSG.
 
-    set _SENDMESSAGE to MSG.
+    set _SENDMESSAGE to _MSG.
     set _CONNECTION to _VESSELTGT:connection.
     _CONNECTION:SENDMESSAGE(_SENDMESSAGE).
 }

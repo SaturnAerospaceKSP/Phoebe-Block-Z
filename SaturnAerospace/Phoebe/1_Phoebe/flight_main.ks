@@ -8,8 +8,6 @@
 // ------------------------
 
 clearScreen.
-GLOBAL _STEER_TARGET IS ship:facing. // global steering parameter
-GLOBAL _THROTTLE_TARGET IS 0. // global throttle parameter
 _CPUINIT(). // Second Phase - Initialises vehicle on startup
 
 GLOBAL FUNCTION _CPUINIT {
@@ -17,7 +15,7 @@ GLOBAL FUNCTION _CPUINIT {
     runOncePath("0:/SaturnAerospace/Phoebe/partlist.ks"). // Part List
     runOncePath("0:/SaturnAerospace/Phoebe/0_Ground/ground_funcs.ks"). // Ground Based Functions
     runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe/flight_funcs.ks"). // Flight Based Functions
-    runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks"). // Azimuth Calculations For Gravity Turn
+    //runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks"). // Azimuth Calculations For Gravity Turn
     runOncePath("0:/SaturnAerospace/Libraries/rsvp/main.ks"). // Interplanetary launch library
 
     set steeringManager:maxstoppingtime to 5. // Max Vehicle Turning Speed
@@ -82,8 +80,9 @@ GLOBAL FUNCTION _PHASE1_TOWERCLEAR { // Liftoff - gravity turn start speed
     SET _STAGE_1_CONTROL TO TRUE.
     SET _STAGE_2_CONTROL TO FALSE. 
 
-    lock steering to _STEER_TARGET. // Steers up from the pad
-    _ECUTHROTTLE(100). // 100% Throttle
+    SET _LAUNCH_STEER TO FACING.
+    LOCK STEERING TO _LAUNCH_STEER. // Steers up from the pad
+    LOCK THROTTLE TO 1. // 100% Throttle
 
     UNTIL ship:verticalSpeed >= _GRAVITYTURN_STARTSPEED {
         IF missionTime > 2 and ship:verticalspeed < 1 { // This is checking if Phoebe has cleared the pad
@@ -101,7 +100,7 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
     _CHECKRECOVERYMETHOD(_STAGE1OXCURRENT).
     
     UNTIL _CURRENTPITCH = _GRAVITYTURN_ENDANGLE or _STAGE1OXCURRENT <= _SHUTDOWNFUELMARGAIN + 400 { // Gravity Turn Logic Here
-        local _THROTTLE_CONTROL is (_G_FORCE_LIMIT * ship:mass / (ship:maxThrust + 0.1) * 100). // Allows vehicle to maintain the G-Force target throughout gravity turn
+        local _THROTTLE_CONTROL is _G_FORCE_LIMIT * ship:mass / (ship:maxThrust + 0.1). // Allows vehicle to maintain the G-Force target throughout gravity turn
         _HEADINGANDPITCHCONTROL("STAGE 1"). // Controls Heading & Pitch throughout gravity turn
         _GETVEHICLEFUEL("STAGE 1"). // Grabs fuel every tick
         IF _VEHICLECONFIG = "Phoebe Heavy" {_GETVEHICLEFUEL("SIDE BOOSTERS").} // Side Booster fuel
@@ -138,20 +137,21 @@ GLOBAL FUNCTION _PHASE1_BOOSTERGUIDANCE { // Guidance - Gravity Turn & Fuel Chec
 
 
             // Steering & Throttle
-                _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL). // Steer outside of the loop and change vars inside
-                _ECUTHROTTLE(_THROTTLE_CONTROL). // Throttle outside the loop
+                _INCLINE_MANAGER(5). // Manage The Inclination
+                LOCK STEERING TO HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL). // Steer outside of the loop and change vars inside
+                LOCK THROTTLE TO _THROTTLE_CONTROL. // Throttle outside the loop
     }
 }
 
 GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate and begin own flights
     // Engine Shutdown
         set _CURRENTFACE to facing. // Facing Vector to point to (stable heading)
-        _STEER_DIRECT(_CURRENTFACE). // Locks steering (we cant lock it to facing as it would not be stable)
+        LOCK STEERING TO _CURRENTFACE. // Locks steering (we cant lock it to facing as it would not be stable)
 
         UNTIL _STAGE1OXCURRENT <= _SHUTDOWNFUELMARGAIN + 10 {_GETVEHICLEFUEL("STAGE 1"). wait 0.} // Stable Time For Steering
 
         _ECU("STAGE 1", "Shutdown"). // Shutdown
-        _ECUTHROTTLE(0). // 0% Throttle (Main Engine Cutoff)
+        LOCK THROTTLE TO 0. // 0% Throttle (Main Engine Cutoff)
         _STAGE1COMMANDCORE:SENDMESSAGE("Initialise Recovery"). // Sends the command to S1's core to begin recovery (BEFORE SEP)
 
         rcs on. // Turn On RCS ports
@@ -160,18 +160,18 @@ GLOBAL FUNCTION _PHASE1_STAGESEPARATION { // Separation - Stage 1 & 2 separate a
     // Separation & Core Messages
         _S1_DEC:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true). // Decouples Stage 1 
         set _SEP_FACING to ship:facing.
-        _STEER_DIRECT(_SEP_FACING). // Steer straight
+        LOCK STEERING TO _SEP_FACING. // Steer straight
         _RCSCU("FORE", "STAGE 2", "ON"). // Ullage begin
 
         wait 1. // Settle Time
 
     // Stage 2 Engine Start
         _ECU("STAGE 2", "Startup").
-        _ECUTHROTTLE(10). // 10% Throttle (TEATEB)
+        LOCK THROTTLE TO 0.1. // 10% Throttle (TEATEB)
         rcs off.
 
-        wait 3.5. // Time To Make Space From Booster
-        _ECUTHROTTLE(100). // 100% Throttle (SES-1)
+        wait 2. // Time To Make Space From Booster
+        LOCK THROTTLE TO 1. // 100% Throttle (SES-1)
         _RCSCU("FORE", "STAGE 2", "OFF"). // Ullage Complete
 
         wait 2. // Final Settle Time
@@ -201,11 +201,12 @@ GLOBAL FUNCTION _PHASE2_VEHICLEGUIDANCE {
     set steeringManager:maxstoppingtime to 0.5. // Slower Turning
     set steeringManager:rollts to 20. // Slower Rolling
 
-    UNTIL ship:apoapsis >= body:atm:height - 4000 {_STEER_DIRECT(_SEP_FACING).} // Waits to start guidance while prograde
+    LOCK STEERING TO _SEP_FACING.
+    UNTIL ship:apoapsis >= body:atm:height - 4000 {wait 0.5.} // Waits to start guidance while prograde
 
-    UNTIL ship:apoapsis >= _APOGEETARGET - 2500 and ship:periapsis > body:atm:height - 1000 { // Apogee must be at the target, periapsis above 0 and ship not descending
+    UNTIL ship:apoapsis >= _APOGEETARGET - 2500 and ship:periapsis > body:atm:height - 2000 { // Apogee must be at the target, periapsis above 0 and ship not descending
         local _THROTTLE_CONTROL is (_G_FORCE_LIMIT * ship:mass / (ship:maxThrust + 0.1) * 100).
-        _HEADINGANDPITCHCONTROL("STAGE 2"). // Controls pitch and heading
+        _HEADINGANDPITCHCONTROL("STAGE 2"). // Controls pitch and heading 
        
         // Fairings Deploy (NOT ON CALYPSO)
             IF _VEHICLECONFIG = "Phoebe" or _VEHICLECONFIG = "Phoebe Heavy" {_DEPLOYFAIRINGS().} // Checks for alt & pressure for fairings
@@ -233,17 +234,18 @@ GLOBAL FUNCTION _PHASE2_VEHICLEGUIDANCE {
             }
 
         // Throttle & Steering
-            _STEER_HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL). // Steer Phoebe
+            _INCLINE_MANAGER(10). // Manage The Inclination
+            LOCK STEERING TO HEADING(_HEADING_CONTROL, _PITCH_CONTROL, _ROLL). // Steer Phoebe
 
-            IF ship:apoapsis <= _APOGEETARGET - 20000 {_ECUTHROTTLE(_THROTTLE_CONTROL).} // Initial Throttle at full power
-            IF ship:apoapsis >= _APOGEETARGET - 20000 and ship:periapsis >= _PERIGEETARGET - 100000 {_ECUTHROTTLE(_THROTTLE_CONTROL - 40).} // Final Slower Throttle
+            IF ship:apoapsis <= _APOGEETARGET - 20000 {LOCK THROTTLE TO _THROTTLE_CONTROL.} // Initial Throttle at full power
+            IF ship:apoapsis >= _APOGEETARGET - 20000 and ship:periapsis >= _PERIGEETARGET - 100000 {SET CONFIG:IPU TO 2000. LOCK THROTTLE TO _THROTTLE_CONTROL - 40.} // Final Slower Throttle
 
         
-        wait 0.01. // Wait Command to reduce lag
+        wait 0.1. // Wait Command to reduce lag
     }
 
-
-    _ECUTHROTTLE(0). // 0% Throttle (SECO)
+    SET CONFIG:IPU TO 1000.
+    LOCK THROTTLE TO 0. // 0% Throttle (SECO)
     wait 5.
 }
 
@@ -255,22 +257,24 @@ GLOBAL FUNCTION _PHASE2_ORBITINSERTIONBURN {
     local _REQUIREDBURNDURATION is _VELTOGO / _MAXACCELERATION. // Required Burn for orbit
 
     UNTIL eta:apoapsis - 1 <= (_REQUIREDBURNDURATION / 2) {
-        _STEER_DIRECT(prograde).
+        LOCK STEERING TO prograde.
         
-        IF ship:apoapsis < _APOGEETARGET + 10 {rcs on. set ship:control:fore to 1.} 
-        ELSE IF ship:apoapsis >= _APOGEETARGET + 50 {rcs on. set ship:control:fore to -1.}    
-        ELSE IF ship:apoapsis >= _APOGEETARGET + 10 and ship:apoapsis < _APOGEETARGET + 50 {set ship:control:fore to 0. rcs off.}
+        IF ship:apoapsis < _APOGEETARGET + 10 and eta:apoapsis > 60 {rcs on. set ship:control:fore to 0.5.} 
+        ELSE IF ship:apoapsis >= _APOGEETARGET + 50 and eta:apoapsis > 60 {rcs on. set ship:control:fore to -0.5.}    
+        ELSE IF ship:apoapsis >= _APOGEETARGET + 10 and ship:apoapsis < _APOGEETARGET + 50 and eta:apoapsis > 60 {set ship:control:fore to 0. rcs off.}
+
+        wait 0.5.
     }
 
-    _ECUTHROTTLE(70). // 100% Throttle (SES-2)
+    LOCK THROTTLE TO 0.7. // 100% Throttle (SES-2)
 
     UNTIL ship:periapsis >= (_PERIGEETARGET - 0.3) {
-        wait 0.
+        if ship:periapsis >= _PERIGEETARGET - 10000 {LOCK THROTTLE TO 0.4.}
 
-        if ship:periapsis >= _PERIGEETARGET - 10000 {_ECUTHROTTLE(40).}
+        wait 0.
     }
 
-    _ECUTHROTTLE(0). // 0% Throttle (SECO-2)
+    LOCK THROTTLE TO 0. // 0% Throttle (SECO-2)
     wait 5.
 }
 
@@ -279,7 +283,10 @@ GLOBAL FUNCTION _PHASE2_ORBITOPS_CLEANUP {
         wait 30. // Time to prepare for separation
         _PAYLOADSEPARATION(). // Deploys payload / payloads
         _ORBITSHUTDOWNPROCEDURE(). // Cleanup the vehicle and shutdown CPU's
+        set _STAGE_2_CONTROL to false.
     } ELSE IF _VEHICLECONFIG = "Calypso" { 
+        set _STAGE_2_CONTROL to false.
+        wait 0.5.
         _CALYPSOCOMMANDCORE:SENDMESSAGE("Initialise Calypso"). // Sends a message to Calypso to begin its orbital operations
         _DEPLOYCALYPSO(). // Deploys calypso separating from stage 2
         _ORBITSHUTDOWNPROCEDURE(). // Shut down S2 in orbit
@@ -304,7 +311,7 @@ GLOBAL FUNCTION _PHASE2_ORBITOPS_CLEANUP {
 
 GLOBAL FUNCTION _INTERPLANETARY_SEQUENCE { // Sequence for flying to other planets, using the RSVP public library
     set config:ipu to 2000. // Fast CPU
-    _STEER_DIRECT(PROGRADE).
+    LOCK STEERING TO PROGRADE.
 
     _MANEUVER_TO_TARGET(). // Burn to be on course to target planet
     _SOI_CAPTURE(). // Capture SOI with stage 2 and bring periapsis to intended position
@@ -330,7 +337,7 @@ LOCAL FUNCTION _MANEUVER_TO_TARGET {
         _EXECUTE_NODE(ship:availablethrust, false, "FORE").
         remove nextNode. // Clear node from the list and focus on next one (now this section is complete)
 
-        _STEER_DIRECT(RETROGRADE).
+        LOCK STEERING TO RETROGRADE.
 }
 
 LOCAL FUNCTION _SOI_CAPTURE {

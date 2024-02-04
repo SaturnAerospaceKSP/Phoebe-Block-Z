@@ -11,21 +11,21 @@
 
 GLOBAL _MISSIONSETTINGS IS LEXICON( // Only change this 
     // vehicle Configuration
-        "MISSION NAME", "SCOMv3 M6", // Mission name (vessel name)
-        "LAUNCH MOUNT",  "CCSFS 40", // [KSC 39a] [CCSFS 40] [Falcon 1.1]
+        "MISSION NAME", "Thanks For That", // Mission name (vessel name)
+        "LAUNCH MOUNT", "KSC 39a", // [KSC 39a] [CCSFS 40] [Falcon 1.1]
         "PAYLOAD TYPE", "Phoebe", // [Phoebe] [Phoebe Heavy] [Calypso] 
-        "TARGET VESSEL", "None", // use "None", or set this to the name of a vessel: "Bob" for example
+        "TARGET VESSEL", "None", // use "None", or set this to the name of a vessel: "Bob" for example (also set this to the target body if applicable) "VAST - 2 - HAVEN"
         "TARGET BODY", "None", // use "None", or body must be it's name: Moon, Mars...
 
     // Ascent & Payload
-        "PAYLOAD COUNT", 12, // How many payloads are required to be separated
+        "PAYLOAD COUNT", 1, // How many payloads are required to be separated
         "ROLL", 0, // Phoebe orientation on ascent (recommended not to touch)
-        "G FORCE LIMIT", 2.5, // Force limit for ascent [2.5 For Calypso with crew]
+        "G FORCE LIMIT", 3, // Force limit for ascent [2.5 For Calypso with crew]
 
     // Orbit Targets
-        "APOGEE", 125, // Highest point of orbit (km)
-        "PERIGEE", 125, // Lowest point of orbit (km)
-        "INCLINE", 28, // Targeted inclination from the Launch Complex (°) [TITAN = 33] [BOB = 45] [SCOM = 0 (28°)]
+        "APOGEE", 700, // Highest point of orbit (km)
+        "PERIGEE", 700, // Lowest point of orbit (km)
+        "INCLINE", 26, // Targeted inclination from the Launch Complex (°) [TITAN = 33] [BOB = 45] [SCOM = 0 (28°)]
 
     // Recovery
         "FORCE RECOVERY", "ASDS" // Can be set to either "ASDS" or "RTLS" or "EXPD" if you want to choose 
@@ -33,7 +33,7 @@ GLOBAL _MISSIONSETTINGS IS LEXICON( // Only change this
 
 GLOBAL _COUNTDOWNEVENTS IS LEXICON(
     "BEGIN COUNTDOWN (NS)", LEXICON("H", 0, "M", 0, "S", 20), // Countdown Initiate (NS - Non Specific)
-    "BEGIN COUNTDOWN (UNIX)", LEXICON("UNIX", 0), // Countdown Initiate With UNIX Time (0 to ignore) 1705435200
+    "BEGIN COUNTDOWN (UNIX)", LEXICON("UNIX", 1707009300), // Countdown Initiate With UNIX Time (0 to ignore) 1707008400
 
     "CREW ARM RETRACT", LEXICON("H", 0, "M", 45, "S", 0), // Crew Arm Retraction
     "CALYPSO STARTUP", LEXICON("H", 0, "M", 40, "S", 0), // Calypso Capsule Power Up - after this point it will abort with thrusters
@@ -54,7 +54,7 @@ GLOBAL _COUNTDOWNEVENTS IS LEXICON(
 GLOBAL _ASCENTSETTINGS IS LEXICON(
     "FIRST STAGE", LEXICON(
         "GRAVITY TURN START SPEED", 50, // Start Speed for Gravity Turn
-        "GRAVITY TURN END ANGLE", 10, // End angle for Gravity Turn
+        "GRAVITY TURN END ANGLE", 20, // End angle for Gravity Turn
         "GRAVITY TURN END ALTITUDE", 45000 // End altitude for Gravity Turn
     ),
     "SECOND STAGE", LEXICON(

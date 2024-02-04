@@ -7,18 +7,6 @@
 //     Flight Funcs
 // ------------------------
 
-GLOBAL FUNCTION _STEER_HEADING { // Replaces default heading steer
-    parameter _HEAD, _PITCH, _ROLLPOINT is 0.
-
-    lock steering to heading(_HEAD, _PITCH, _ROLLPOINT).
-}
-
-GLOBAL FUNCTION _STEER_DIRECT { // Replaces directional steer
-    parameter _DIRECT.
-
-    lock steering to _DIRECT.
-}
-
 GLOBAL FUNCTION _RCSCU { // RCS Control Unit
     parameter _DIR is "NO CHANGE", _STAGE is "STAGE 2", _TOGGLE is "none".  
     // revison 2 simplifies the code and toggles RCS based on what we want, rather than assuming it is either on or off
@@ -86,12 +74,6 @@ GLOBAL FUNCTION _RCSCU { // RCS Control Unit
 
 }
 
-GLOBAL FUNCTION _ECUTHROTTLE { // Replaces default throttle
-    parameter _TGT.
-
-    lock throttle to _TGT / 100.
-}
-
 GLOBAL FUNCTION _DEPLOYSIDEBOOSTERS { // Separates side boosters 
     FOR P in ship:partstagged("SB_DEC") {
             IF P:MODULES:CONTAINS("ModuleTundraAnchoredDecoupler") { // If the parts contain the module
@@ -144,6 +126,110 @@ GLOBAL FUNCTION _ORBITSHUTDOWNPROCEDURE { // Shuts down unneccesary things and d
     
 }
 
+GLOBAL FUNCTION _LAUNCH_AZIMUTH { // From KSLib
+    PARAMETER _TARGET_INCLINE, _ORBIT_ALT, _RAW is false, _AUTOSWITCH is false.
+
+    LOCAL _SHIP_LAT is ship:latitude.
+    LOCAL _RAW_HEAD IS 0. // Azimuth without auto switch
+
+    IF ABS(_TARGET_INCLINE) < abs(_SHIP_LAT) {set _TARGET_INCLINE TO _SHIP_LAT.}
+    IF (_TARGET_INCLINE > 180) {set _TARGET_INCLINE to -360 + _TARGET_INCLINE.}
+    IF (_TARGET_INCLINE < -180) {set _TARGET_INCLINE to 360 + _TARGET_INCLINE.}
+    IF hasTarget {SET _AUTOSWITCH to true.}
+
+    LOCAL _HEAD IS arcSin(max(min(cos(_TARGET_INCLINE) / cos(_SHIP_LAT), 1), -1)).
+    set _RAW_HEAD to _HEAD.
+
+    IF _AUTOSWITCH {
+        IF _NODE_SIGN_TARGET() > 0 {set _HEAD to 180 - _HEAD.}
+    } ELSE IF (_TARGET_INCLINE < 0) {set _HEAD to 180 - _HEAD.}
+
+    LOCAL _EQ_VEL is (2 * constant:pi * body:radius) / body:rotationperiod.
+    local _V_ORBIT is sqrt(body:mu / (_ORBIT_ALT + body:radius)).
+    LOCAL _V_ROT_X is _V_ORBIT * sin(_HEAD) - (_EQ_VEL * cos(_SHIP_LAT)).
+    LOCAL _V_ROT_Y is _V_ORBIT * cos(_HEAD).
+    
+    SET _HEAD TO 90 - arcTan2(_V_ROT_Y, _V_ROT_X).
+
+    IF _RAW {return mod(_RAW_HEAD + 360, 360).}
+    ELSE {return mod(_HEAD + 360, 360).}
+}
+
+LOCAL FUNCTION _NODE_SIGN_TARGET { // approaching AN or DN
+	if (hasTarget) {
+		local joinVec is vcrs(_ORBIT_BINORMAL(), _TARGET_BINORMAL()):normalized.
+		local signVec is vcrs(-body:position:normalized, joinVec):normalized.
+		local sign is vdot(_ORBIT_BINORMAL(), signVec).
+
+		if (sign > 0) { return 1. }
+		else { return -1. }
+	} 
+	else { return 1. }
+}
+
+function _ORBIT_TANGENT { // ship velocity
+    parameter ves is ship.
+
+    return ves:velocity:orbit:normalized.
+}
+
+LOCAL FUNCTION _ORBIT_BINORMAL { // ship binormal
+    parameter ves is ship.
+
+    return vcrs((ves:position - ves:body:position):normalized, _ORBIT_TANGENT(ves)):normalized.
+}
+
+LOCAL FUNCTION _TARGET_BINORMAL { // target binormal
+    parameter ves is target.
+
+    return vcrs((ves:position - ves:body:position):normalized, _ORBIT_TANGENT(ves)):normalized.
+}
+
+GLOBAL FUNCTION _INCLINE_MANAGER { // Copied from raizspace code on the shuttle to correct inclination
+    parameter maxDeviation.
+	
+	set incDiff to SHIP:ORBIT:INCLINATION - _INCLINETARGET.
+
+	if incDiff > 0.05 {
+		if _PROGRADE_HEAD < 90 AND _INCLINE_CORRECTION < maxDeviation{
+			set _INCLINE_CORRECTION to _INCLINE_CORRECTION + (maxDeviation/100).
+		}
+		if _PROGRADE_HEAD > 90 AND _INCLINE_CORRECTION > -maxDeviation{
+			set _INCLINE_CORRECTION to _INCLINE_CORRECTION - (maxDeviation/100).
+		}
+	}
+	if incDiff < -0.05{
+		if _PROGRADE_HEAD < 90 AND _INCLINE_CORRECTION > -maxDeviation{
+			set _INCLINE_CORRECTION to _INCLINE_CORRECTION - (maxDeviation/100).
+		}
+		if _PROGRADE_HEAD > 90 AND _INCLINE_CORRECTION < maxDeviation{
+			set _INCLINE_CORRECTION to _INCLINE_CORRECTION + (maxDeviation/100).
+		}
+	}
+	
+	if incDiff < 0.05 AND incDiff > -0.05{
+		if _INCLINE_CORRECTION > 0{
+			set _INCLINE_CORRECTION to _INCLINE_CORRECTION - (maxDeviation/100).
+		}
+		
+		if _INCLINE_CORRECTION < 0{
+			set _INCLINE_CORRECTION to _INCLINE_CORRECTION + (maxDeviation/100).
+		}
+	}	
+}
+
+GLOBAL FUNCTION _HEADING_OF_VECTOR {
+    PARAMETER VECT.
+
+    LOCAL EAST IS VCRS(SHIP:UP:VECTOR, SHIP:NORTH:VECTOR).
+
+    LOCAL TRIG_X IS VDOT(SHIP:NORTH:VECTOR, VECT).
+    LOCAL TRIG_Y IS VDOT(EAST, VECT).
+
+    LOCAL RESULT IS ARCTAN2(TRIG_Y, TRIG_X).
+
+    IF RESULT < 0 {RETURN 360 + RESULT.} ELSE {RETURN RESULT.}
+}
 
 
 
@@ -157,7 +243,7 @@ GLOBAL FUNCTION _HEADINGANDPITCHCONTROL {
     parameter _STAGE.
 
     IF _STAGE = "STAGE 1" { // GRAVITY TURN
-        set _HEADING_CONTROL to LAZcalc(_AZIMUTHCALCULATION). // Heading Azimuth to stay on correct inclination
+        set _HEADING_CONTROL to _LAUNCH_AZIMUTH(_INCLINETARGET, _APOGEETARGET). // Heading Azimuth to stay on correct inclination
         set _PITCH_CONTROL to max(_GRAVITYTURN_ENDANGLE, 90 * (1 - ship:altitude / _GRAVITYTURN_ENDALTITUDE)). // Pitchover, meets end angle at end altitude
     } ELSE IF _STAGE = "STAGE 2" { // OPEN / CLOSED / TERMINAL GUIDANCE
         IF _APOGEETARGET > body:atm:height + 20000 {
@@ -168,7 +254,7 @@ GLOBAL FUNCTION _HEADINGANDPITCHCONTROL {
 
         set _HALVEDETA to 15 - eta:apoapsis. 
 
-        set _HEADING_CONTROL to LAZcalc(_AZIMUTHCALCULATION). // Azimuth like stage 1 for correct incline
+        set _HEADING_CONTROL to _LAUNCH_AZIMUTH(_INCLINETARGET, _APOGEETARGET). // Heading Azimuth to stay on correct inclination
         set _PITCH_CONTROL to (_HALVEDETA * 2) + ((_APOAPSISOFFSET / 5000) * 10). // Controls vehicle pitch to finish on target
 
         print "HEAD TGT: " + _HEADING_CONTROL at (10, 10).

@@ -12,4 +12,4 @@ print "Waiting For Message - SB".
 // }
 
 wait until ag8.
-runOncePath("0:/SaturnAerospace/Phoebe/2_Heavy/heavy_main.ks"). // Runs path of recieved message
+runOncePath("0:/SaturnAerospace/Phoebe/2_Heavy/test.ks"). // Runs path of recieved message

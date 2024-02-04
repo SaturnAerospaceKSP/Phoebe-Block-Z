@@ -41,6 +41,9 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
         global _PERIGEETARGET to _MISSIONSETTINGS["Perigee"] * 1000.
         global _INCLINETARGET to _MISSIONSETTINGS["Incline"].
 
+        global _INCLINE_CORRECTION is 0.
+        global _PROGRADE_HEAD is _COMPASS_FOR(). 
+
         // IF _VESSELTARGET = true { // Changing vehicle inclination based on target
         //     set _INCLINETARGET to _TARGET_SPACECRAFT:obt:inclination.
         // }
@@ -77,7 +80,7 @@ GLOBAL FUNCTION _DEFINESETTINGS { // Defines Mission Settings
 
     // Extra General Settings
         GLOBAL _GOFORLAUNCH IS TRUE. // Are We (by default) GO FOR LAUNCH 
-        GLOBAL _AZIMUTHCALCULATION is LAZcalc_init(_APOGEETARGET, _INCLINETARGET). // Creates a heading from the Apogee and inclination targets
+        // GLOBAL _AZIMUTHCALCULATION is LAZcalc_init(_APOGEETARGET, _INCLINETARGET). // Creates a heading from the Apogee and inclination targets
 
         GLOBAL _STAGE_1_CONTROL IS FALSE. // For stage 1 and it's gravity turn
         GLOBAL _STAGE_2_CONTROL IS FALSE. // For stage 2 and is toggled when stage 2 is controlling the script
@@ -114,7 +117,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
             set _GND_TOWER to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["TOWER"])[0].
             set _GND_BASE to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["BASE"])[0].
         } ELSE IF _LAUNCHMOUNT = "CCSFS 40" {
-            //set _GND_WDS to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["WDS"])[0].
+            // set _GND_WDS to ship:partstagged(_GROUNDTAGS["GROUND STAGE"]["WDS"])[0].
         }
     }
 
@@ -250,7 +253,7 @@ GLOBAL FUNCTION _DEFINEPARTS { // Define Vehicle Parts - checks config and assig
     }
 
     // Extra Variables
-        IF not _STAGE_2_CONTROL {GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")).} // Shutdown point for stage 1 ascent (meco) (center core too)
+        IF not _STAGE_2_CONTROL and missionTime < 60 {GLOBAL _SHUTDOWNFUELMARGAIN IS _CHECKRECOVERYMETHOD(_GETVEHICLEFUEL("STAGE 1")).} // Shutdown point for stage 1 ascent (meco) (center core too)
 
         IF _VEHICLECONFIG = "Phoebe Heavy" {global _SIDEBOOSTERS_ATTACHED is true. set _SHUTDOWNFUELSIDEBOOSTERS to 4950.} // This sets side boosters attachment state for use in separation
         ELSE {set _SIDEBOOSTERS_ATTACHED to false.}
@@ -406,10 +409,10 @@ GLOBAL FUNCTION _COUNTDOWNEVENTSACTION { // All events in countdown
     } ELSE IF _CURRENTTIME = _TIME_WATERDELUGE and _LAUNCHMOUNT = "KSC 39a" { // Phoebe / Calypso on 39a
         _WATERDELUGE(_LAUNCHMOUNT, "Startup").
     } ELSE IF _CURRENTTIME = _TIME_WATERDELUGE and _LAUNCHMOUNT = "CCSFS 40" { // Phoebe / Calypso on 40
-        //_WATERDELUGE(_LAUNCHMOUNT, "Startup").
+        // _WATERDELUGE(_LAUNCHMOUNT, "Startup").
     } ELSE IF _CURRENTTIME = _TIME_COREIGNITION {
         _ECU("STAGE 1", "Startup").
-        _ECUTHROTTLE(100).
+        LOCK THROTTLE TO 1.
     } ELSE IF _CURRENTTIME < 1 {
         _STAGE2COMMANDCORE:SENDMESSAGE("Run Stage 2"). // Sends the S1 CPU a command to run
         _STRONGBACKACTIONS("Release"). 
@@ -432,20 +435,20 @@ GLOBAL FUNCTION _STRONGBACKACTIONS { // Controls for vehicle strongback
                 _GND_STRONGBACK:getmodule("ModuleTundraDecoupler"):doaction("Decouple", true).
             }
         } ELSE IF _ACTION = "Start Fueling" {
-            IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Start Fueling") {
-                _GND_STRONGBACK:getmodulebyindex(10):doaction("Start Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Start Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(11):doaction("Start Fueling", true).
             }
         } ELSE IF _ACTION = "Stop Fueling" {
-            IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Stop Fueling") {
-                _GND_STRONGBACK:getmodulebyindex(10):doaction("Stop Fueling", true).
+            IF _GND_STRONGBACK:getmodulebyindex(11):hasaction("Stop Fueling") {
+                _GND_STRONGBACK:getmodulebyindex(11):doaction("Stop Fueling", true).
             }
         } ELSE IF _ACTION = "Start Generator" {
-            IF _GND_STRONGBACK:getmodulebyindex(9):hasaction("Enable Power Generator") {
-                _GND_STRONGBACK:getmodulebyindex(9):doaction("Enable Power Generator", true).
+            IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Enable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(10):doaction("Enable Power Generator", true).
             }
         } ELSE IF _ACTION = "Stop Generator" {
-           IF _GND_STRONGBACK:getmodulebyindex(9):hasaction("Disable Power Generator") {
-                _GND_STRONGBACK:getmodulebyindex(9):doaction("Disable Power Generator", true).
+           IF _GND_STRONGBACK:getmodulebyindex(10):hasaction("Disable Power Generator") {
+                _GND_STRONGBACK:getmodulebyindex(10):doaction("Disable Power Generator", true).
            }
         }
     } ELSE IF _LAUNCHMOUNT = "KSC 39a" {
@@ -573,7 +576,7 @@ GLOBAL FUNCTION _GROUNDSAFEPROCEDURE { // For Aborts & Shutdowns this function c
         rcs off.
         sas off. 
         _ECU("STAGE1", "Shutdown"). // Engine Shutdown
-        _ECUTHROTTLE(0). // Turn Throttle Off
+        LOCK THROTTLE TO 0. // Turn Throttle Off
         IF _LAUNCHMOUNT = "KSC 39a" {_WATERDELUGE("Shutdown").}
         print "GROUND SAFE PROCEDURE ACTIVATED!" at (10, 10).
         print "CPU SHUTTING DOWN!" at (10,11).
@@ -662,7 +665,7 @@ GLOBAL FUNCTION _GETVEHICLEFUEL { // Returns fuel and capacity of vehicle
 GLOBAL FUNCTION _CHECKRECOVERYMETHOD { // Checks fuel from getvehiclefuel and decides recovery method
     parameter _CURRENTPROPELLANT.
 
-    global _ASDS_PROPELLANT is 1900. // Anything Above 600KM Apogee - 1900 default
+    global _ASDS_PROPELLANT is 1925. // Anything Above 600KM Apogee - 1900 default
     global _RTLS_PROPELLANT is 2600. // 600 KM Max RTLS Apogee - 2600 default
     global _EXPD_PROPELLANT is 2. // Expended booster
 
@@ -712,6 +715,32 @@ GLOBAL FUNCTION _FLIGHTTERMINATIONSYSTEM { // FTS System (self destruct) NEEDS T
 
 
 
+
+
+// -----------------------
+//    Guidance Funcs
+// -----------------------
+
+GLOBAL FUNCTION _COMPASS_FOR {
+	
+	set pointing to ship:srfprograde:forevector.
+	set east to _EAST_FOR().
+
+	set trig_x to vdot(ship:north:vector, pointing).
+	set trig_y to vdot(east, pointing).
+
+	set result to arctan2(trig_y, trig_x).
+
+	if result < 0 { 
+		return 360 + result.
+	} else {
+		return result.
+	}
+}
+
+GLOBAL FUNCTION _EAST_FOR {
+    return vcrs(ship:up:vector, ship:north:vector).
+}
 
 
 

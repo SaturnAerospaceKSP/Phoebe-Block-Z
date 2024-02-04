@@ -15,7 +15,7 @@ GLOBAL FUNCTION _CPUINIT { // Initialisation of the ground CPU & preparation for
     runOncePath("0:/SaturnAerospace/Phoebe/partlist.ks"). // Part List
     runOncePath("0:/SaturnAerospace/Phoebe/0_Ground/ground_funcs.ks"). // Ground Functions
     runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe/flight_funcs.ks"). // Flight Functions
-    runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks"). // Azimuth Calculations
+    //runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks"). // Azimuth Calculations
     
     ag6 off. // Abort Trigger
     ag9 off. // Abort Trigger 
@@ -59,7 +59,9 @@ GLOBAL FUNCTION _COUNTDOWNSEQUENCE { // Primary Countdown Function
                     set _TMINUSCLOCK to _TMINUSCLOCK - kuniverse:realworldtime.
                 } ELSE IF _TMINUSCLOCK = 0 or _TMINUSCLOCK < kuniverse:realworldtime {
                     set _TMINUSCLOCK to _TMINUSCLOCK - 0.5. // Counts down the clock
-                } 
+                } ELSE IF _TMINUSCLOCK < 0 {
+                    break.
+                }
 
             wait 0.5. 
         } ELSE IF _VESSELTARGET = true{ // For Timed T-0  |  "" is a replacement for false due to kos string oddness

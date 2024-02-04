@@ -10,7 +10,7 @@
 CD("0:/SaturnAerospace/Phoebe/"). // Changes default directory for file use
 runOncePath("0:/SaturnAerospace/Phoebe/mission_settings.ks"). // Prerequisite for scripts
 runOncePath("0:/SaturnAerospace/Phoebe/partlist.ks"). // Prerequisite for scripts
-runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks"). // Azimuth Library
+// runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks"). // Azimuth Library
 runOncePath("0:/SaturnAerospace/Phoebe/0_Ground/ground_funcs.ks"). // Required for conversion funcs
 _DEFINESETTINGS(). // Defines settings for vehicle
 _DEFINEPARTS(). // Defines parts for the vehicle
@@ -104,25 +104,25 @@ GLOBAL FUNCTION _DATALOGGING {
         print "| MISSION: " + shipName at (0,1). 
         print "| M.E.T: " + _FORMATSECONDS(missionTime) at (0,2).
         print "|───[ORBIT]─────────────────────────" at (0,3).
-        print "| APOGEE: " + round(apoapsis / 1000, 1) + " (KM)   " at (0,4).
-        print "| PERIGEE: " + round(periapsis / 1000, 1) + " (KM)   " at (0,5). 
-        print "| INCLINE: " + round(orbit:inclination, 1) + " (Deg)   " at (0,6).
+        print "| APOGEE: " + round(apoapsis / 1000, 1) + " (KM)       " at (0,4).
+        print "| PERIGEE: " + round(periapsis / 1000, 1) + " (KM)       " at (0,5). 
+        print "| INCLINE: " + round(orbit:inclination, 1) + " (Deg)       " at (0,6).
         print "|───[VEHICLE]───────────────────────" at (0,7).
         print "| MASS: " + round(ship:mass, 1) + " (T)   " at (0,8).
-        print "| THRUST: " + round(ship:availablethrust, 1) + " (KN)   " at (0,9).
+        print "| THRUST: " + round(ship:availablethrust, 1) + " (KN)          " at (0,9).
 
         if ship:altitude < body:atm:height {print "| MACH: " + round(sqrt(2 / 1.4 * ship:q / body:atm:altitudepressure(altitude)), 3) + " (MACH)   " at (0,10).}
-        else {print "| AIRSPEED: " + round(airspeed, 3) + " (M/S)   " at (0,10).}
+        else {print "| AIRSPEED: " + round(airspeed, 3) + " (M/S)         " at (0,10).}
 
-        print "| ALTITUDE: " + round(ship:altitude / 1000, 1) + " (KM)   " at (0,11).
-        print "| THROTTLE: " + round(throttle * 100, 3) + " (%)   " at (0,12).
+        print "| ALTITUDE: " + round(ship:altitude / 1000, 1) + " (KM)         " at (0,11).
+        print "| THROTTLE: " + round(throttle * 100, 3) + " (%)        " at (0,12).
         print "| PITCH: " + round(90 - vectorAngle(ship:up:forevector, ship:facing:forevector), 3) + " (Deg)   " at (0,13).
         print "|───[TIMINGS]───────────────────────" at (0,14).
-        print "| ETA APOGEE: " + _FORMATSECONDS(eta:apoapsis) + " (s)   "at (0,15).
-        print "| ETA PERIGEE: " + _FORMATSECONDS(eta:periapsis) + " (s)   " at (0,16).
+        print "| ETA APOGEE: " + _FORMATSECONDS(eta:apoapsis) + " (s)         "at (0,15).
+        print "| ETA PERIGEE: " + _FORMATSECONDS(eta:periapsis) + " (s)             " at (0,16).
         print "|───[POSITION]──────────────────────" at (0,17).
-        print "| LNG COORDS: " + round(longitude, 3) + "   " at (0,18).
-        print "| LAT COORDS: " + round(latitude, 3) + "   " at (0,19).
+        print "| LNG COORDS: " + round(longitude, 3) + "           " at (0,18).
+        print "| LAT COORDS: " + round(latitude, 3) + "            " at (0,19).
         print "|───────────────────────────────────" at (0,20).
         print "| DATA FILE: " + "FLIGHT " + _THIS_FLIGHT_NUMBER at (0,21).
         

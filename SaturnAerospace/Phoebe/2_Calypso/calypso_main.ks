@@ -12,82 +12,84 @@ _CPUINIT().
 
 GLOBAL FUNCTION _CPUINIT {
     // Place files required here
-    runOncePath("0:/SaturnAerospace/Phoebe/mission_Settings.ks").
-    runOncePath("0:/SaturnAerospace/Phoebe/partlist.ks").
-    runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks").
-    runOncePath("0:/SaturnAerospace/Phoebe/0_Ground/ground_funcs.ks").
-    runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe/flight_funcs.ks").
-    runOncePath("0:/SaturnAerospace/Phoebe/2_Calypso/calypso_funcs.ks").
+        runOncePath("0:/SaturnAerospace/Phoebe/mission_Settings.ks").
+        runOncePath("0:/SaturnAerospace/Phoebe/partlist.ks").
+        runOncePath("0:/SaturnAerospace/Libraries/LAZCALC.ks").
+        runOncePath("0:/SaturnAerospace/Phoebe/0_Ground/ground_funcs.ks").
+        runOncePath("0:/SaturnAerospace/Phoebe/1_Phoebe/flight_funcs.ks").
+        runOncePath("0:/SaturnAerospace/Phoebe/2_Calypso/calypso_funcs.ks").
 
-    set steeringManager:maxstoppingtime to 0.01. // Smooth & Controlled Movement
-    set steeringManager:rollts to 2. // Smooth Roll
-    set config:ipu to 2000. // CPU Speed
+        set steeringManager:maxstoppingtime to 0.01. // Smooth & Controlled Movement
+        set steeringManager:rollts to 2. // Smooth Roll
+        set config:ipu to 2000. // CPU Speed
 
     // Prepare vehicle
-    _DEFINESETTINGS(). // Defines vehicle settings (from ground)
-    _DEFINEPARTS(). // Defines part list 
+        _DEFINESETTINGS(). // Defines vehicle settings (from ground)
+        _DEFINEPARTS(). // Defines part list 
 
 
     // Mission Configuration
+        lock steering to prograde.
         set _VEHICLECONFIG to "Calypso Dock". // Set this to either "Calypso Dock" or "Calypso Tour" to choose which mission style you would like
 
 
     // Flight Style
-    wait 15. // Small wait for the shroud
-    IF _VEHICLECONFIG = "Calypso Tour" { // Sequence for the tourism version of Calypso
-        // Setup
-            _CALYPSOCAPSULEACTIONS("TOGGLE SHROUD"). // Open Aerodynamic Shroud
-            wait 2.
-            IF _CC_CAP:getmodulebyindex(11):hasaction("Enable RCS Thrust") {
-                _CC_CAP:getmodulebyindex(11):doaction("Enable RCS Thrust", true). // Enable Port RCS (Not on weirdly)
-            }
-            
+        wait 15. // Small wait for the shroud
+        IF _VEHICLECONFIG = "Calypso Tour" { // Sequence for the tourism version of Calypso
+            // Setup
+                _CALYPSOCAPSULEACTIONS("TOGGLE SHROUD"). // Open Aerodynamic Shroud
+                wait 2.
+                IF _CC_CAP:getmodulebyindex(11):hasaction("Enable RCS Thrust") {
+                    _CC_CAP:getmodulebyindex(11):doaction("Enable RCS Thrust", true). // Enable Port RCS (Not on weirdly)
+                }
+                
 
-        // Orbit Correction
-            _CATCH_ORBIT().
-    } ELSE IF _VEHICLECONFIG = "Calypso Dock" { // Docking Version of calypso (Crew / Cargo)
-        // Setup
-            IF hasTarget = false {set target to _TARGET_SPACECRAFT.} // Sets a target to avoid issues
+            // Orbit Correction
+                _CATCH_ORBIT().
+        } ELSE IF _VEHICLECONFIG = "Calypso Dock" { // Docking Version of calypso (Crew / Cargo)
+            // Setup
+                IF hasTarget = false {set target to _TARGET_SPACECRAFT.} // Sets a target to avoid issues
 
-            _CALYPSOCAPSULEACTIONS("TOGGLE SHROUD"). 
-            wait 5.
-            IF _CC_CAP:getmodulebyindex(11):hasaction("Enable RCS Thrust") {
-                _CC_CAP:getmodulebyindex(11):doaction("Enable RCS Thrust", true). // Enable Port RCS (Not on weirdly)
-            }
+                _CALYPSOCAPSULEACTIONS("TOGGLE SHROUD"). 
+                wait 5.
+                IF _CC_CAP:getmodulebyindex(11):hasaction("Enable RCS Thrust") {
+                    _CC_CAP:getmodulebyindex(11):doaction("Enable RCS Thrust", true). // Enable Port RCS (Not on weirdly)
+                }
 
-        // Rendezvous
-            IF ship:periapsis < _PERIGEETARGET - 100 {
-                _CATCH_ORBIT(). // Looks at current orbit & changes orbit to get to the station with fastest time
-            }
+    // Rendezvous
+        IF ship:periapsis < _PERIGEETARGET - 100 {
+            _CATCH_ORBIT(). // Looks at current orbit & changes orbit to get to the station with fastest time
+        }
 
-            _MATCH_ALIGN(). // Matches the alingments of the orbits when at the AN/DN node
-            _HOHMAN_RAISE(). // Raises orbit to match that of the target for an intercept
-            _HOHMAN_CIRCULARISE(). // When at apogee, circularise to match target
+        _MATCH_ALIGN(). // Matches the alingments of the orbits when at the AN/DN node
+        _HOHMAN_RAISE(). // Raises orbit to match that of the target for an intercept
+        _HOHMAN_CIRCULARISE(). // When at apogee, circularise to match target
 
-        // Reach Station
-            _REDUCE_RELATIVE_VELOCITY(100). // Reduces velocity relative to station 
-            _TRANSLATE_TO_STATION(5000, 25, 40). // Now move toward the station 
-            _TRANSLATE_TO_STATION(2500, 15, 10). // Now move slower as we get closer
-            _TRANSLATE_TO_STATION(170, 8.5, 10). // Finally move to the physics range of the target
+    // Reach Station
+        _REDUCE_RELATIVE_VELOCITY(100). // Reduces velocity relative to station 
+        _TRANSLATE_TO_STATION(5000, 20, 40). // Now move toward the station 
+        _TRANSLATE_TO_STATION(2500, 15, 10). // Now move slower as we get closer
+        _TRANSLATE_TO_STATION(170, 8.5, 10). // Finally move to the physics range of the target
 
-        // Dock with station
-            global _CALYPSO_DOCKING_PORT is _CC_DCK. // Assign docking port to the variable set on launch
-            global _STATION_DOCKING_PORT is target:partstagged("APAS_BACK")[0]. // Get the station's part for docking [APAS_FRONT] [APAS_BACK]
+    // Dock with station
+        global _CALYPSO_DOCKING_PORT is _CC_DCK. // Assign docking port to the variable set on launch
+        global _STATION_DOCKING_PORT is target:partstagged("APAS_VAST2")[0]. // Get the station's part for docking [APAS_FRONT] [APAS_BACK]
 
-            _CALYPSO_MOVE_TO_DOCK(50, 2). // Close to 50m at 2m/s
-            _CALYPSO_HOLD_POINT(). // Hold at 50m
+        _CALYPSO_MOVE_TO_DOCK(50, 2). // Close to 50m at 2m/s
+        _CALYPSO_HOLD_POINT(). // Hold at 50m
 
-            LOCK STEERING TO LOOKDIRUP(ship:prograde:forevector, ship:body:position). // Panels Up & point to port
+        LOCK STEERING TO LOOKDIRUP(ship:prograde:forevector, ship:body:position). // Panels Up & point to port
 
-            _CALYPSO_MOVE_TO_DOCK(25, 1). // Close to 25m at 1m/s
-            _CALYPSO_HOLD_POINT(). // Hold at 25m
-            _CALYPSO_MOVE_TO_DOCK(10, 0.8). // Close to 10m at 0.8m/s
-            _CALYPSO_MOVE_TO_DOCK(0.5, 0.4). // Close to dock with station at 0.4m/s
+        _CALYPSO_MOVE_TO_DOCK(25, 1). // Close to 25m at 1m/s
+        _CALYPSO_HOLD_POINT(). // Hold at 25m
+        _CALYPSO_MOVE_TO_DOCK(10, 0.8). // Close to 10m at 0.8m/s
+        _CALYPSO_HOLD_POINT(). // Hold at 10m
+        _CALYPSO_MOVE_TO_DOCK(0.5, 0.4). // Close to dock with station at 0.4m/s
 
-            set ship:control:neutralize to true.
-            wait 4.
-            unlock steering.
-            unlock throttle.
+        set ship:control:neutralize to true.
+        wait 4.
+        unlock steering.
+        unlock throttle.
     }
 }
 
@@ -124,8 +126,8 @@ LOCAL FUNCTION _CATCH_ORBIT { // Checks the current orbit and where the station 
     rcs on.
     set ship:control:fore to -1. // Start burning rearward to raise the periapsis to the intended altitude
 
-    UNTIL ship:periapsis >= _PERIGEETARGET {
-        IF ship:periapsis > body:atm:height {set ship:control:fore to -0.5.} // Lower thrust for final part of the burn
+    UNTIL ship:periapsis >= _PERIGEETARGET - 500 {
+        IF ship:periapsis > body:atm:height {set ship:control:fore to -1.} // Lower thrust for final part of the burn
 
         wait 0.
     }

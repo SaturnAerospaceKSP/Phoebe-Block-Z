@@ -28,7 +28,7 @@ LOCAL FUNCTION _SCOM_INIT {
     _DISH:getmodule("ModuleDeployableAntenna"):doaction("Toggle Panels", true).
 
     wait 30.
-    set SHIP:name to "SCOMv3 M4".
+    set SHIP:name to "SCOMv3".
 }
 
 
