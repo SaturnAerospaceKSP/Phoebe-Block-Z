@@ -1,0 +1,534 @@
+ship = - Droneship PEUFED
+version = 1.12.5
+description = 
+type = VAB
+size = 25.0000057,12.4348907,50.2434464
+steamPublishedFileId = 0
+persistentId = 1401980149
+rot = 0,0,0,0
+missionFlag = Squad/Flags/SALogo
+vesselType = Debris
+OverrideDefault = False,False,False,False
+OverrideActionControl = 0,0,0,0
+OverrideAxisControl = 0,0,0,0
+OverrideGroupNames = ,,,
+_modVersions = ModuleManagerWatchDog=1.1.1|Scale_Redist=2.4.7|Firespitter=7.3.7660|ModuleManager=4.2.3|ClickThroughBlocker=2.1.10|0Harmony=2.2.1|HarmonyInstallChecker=2.2.1|BlendshapeModelLoader=1.0.0|TexturesUnlimited=0.0.0|ToolbarControl=0.1.9|KSPe.Light.Recall=2.5.2|Attached=0.4.0|AttachedOnEditor=0.4.0|ChillingOut=0.4.0|Driftless=0.4.0|KSP-Recall=0.4.0|Refunding=0.4.0|Resourceful=0.4.0|ActiveTextureManagement=1.0.0|LibSquishPort=1.0.0|NvidiaTextureTools=1.0.0|AnimatedDecouplers=1.4.2|KSPe.Light.AviationLights=2.4.3|AviationLights=4.2.1|B9PartSwitch=2.18.0|PlanetsideExplorationTechnologies=1.0.0|BetterBurnTime=1.0.0|BDB=1.11.1|CameraTools=1.26.0|Chatterer=0.9.99|CCK=4.0.0|ConformalDecals=0.2.12|KatLib=1.0.7240|SimpleBoiloff=0.2.1|CustomPreLaunchChecks=1.8.1|DeployableEngines=2.2.0|DiscordRP=1.0.0|DistantObject=0.0.0|KSPe.Light.DOE=2.4.2|DMModuleScienceAnimateGeneric=0.22.0|DockRotate=1.12.1|DynamicBatteryStorage=1.0.0|EasyVesselSwitch=2.3.7852|KSPDev_Utils.2.6-EVS=2.6.0|EditorExtensionsRedux=3.4.3|EngineLight=1.0.0|EngineLightRelit=1.6.3|Atmosphere=2.3.1|CelestialShadows=2.3.1|CityLights=2.3.1|EVEManager=2.3.1|PartFX=2.3.1|PQSManager=2.3.1|ShaderLoader=2.3.1|Terrain=2.3.1|TextureConfig=2.3.1|Utils=2.3.1|_BuildManager=2.3.1|FMRSContinued=1.2.9|FossilizedPlugin=1.0.0|FreeIva=0.2.18|StarshipFrost=1.0.0|HangerExtenderExtended=3.6.0|HUDReplacer=1.0.0|HullcamVDSContinued=0.2.2|RasterPropMonitor=0.31.13|KerbalEngineer.Unity=1.0.0|KerbalEngineer=1.1.9|KerbalJointReinforcementNext=4.2.26|KerbalKonstructs=1.8.6|System.Core=4.6.57|System.Xml=4.6.57|DeployableAeroSurfaces=1.0.0|HyperEdit=1.5.8|MiniAVC=1.0.3|Kopernicus.Parser=1.0.0|ModularFlightIntegrator=1.2.10|Kopernicus=1.12.193|ICSharpCode.SharpZipLib=0.86.0|kOS=1.4.0|kOS.Safe=1.4.0|Kronometer=1.12.0|0_MultipleModuleInPartAPI=1.0.0|KSPCommunityFixes=1.32.1|KSPWheel=0.0.0|Sigma88LoadingScreens=0.5.0|MechJeb2=2.14.3|System.Buffers=4.6.28619|WatchDogForInterstellarRedist=1.1.1|WatchDogForScaleRedist=1.1.1|WatchDogInstallChecker=1.1.1|NearFutureExploration=0.4.0|NFPropUtils=1.0.0|NearFuturePropulsion=0.9.0|NearFutureSolar=0.4.0|NearFutureUtils=0.0.0|OrbitPOInts=0.0.0|PlanetShine=0.2.6|ProceduralParts=2.5.8|RCSBuildAid=0.10.0|ReentryParticleEffectRenewed=1.8.1|Restock=0.1.0|RetractableLiftingSurface=0.2.1|RocketSoundEnhancement.Unity=1.0.0|RocketSoundEnhancement=0.9.7|scatterer=0.871.0|Shabby=0.3.0|SmokeScreen=2.8.14|KSP_Log=1.2.0|ButtonManager=1.0.1|KSP_ColorPicker=1.1.0|KSP_PartHighlighter=1.1.0|SpaceTuxUtility=1.0.1|VesselModuleSave=1.0.1|KSPSteamCtrlr=0.0.1|StagedAnimation=1.0.0|HabUtils=1.0.0|StarshipExpansionProject=1.0.0|StarshipLaunchExpansion=1.0.0|TacSelfDestruct=1.7.0|TarsierSpaceTech=7.13.0|Trajectories=2.4.5|TransferWindowPlanner=1.8.0|TUFX=1.0.7|TundraExploration=1.0.0|KSPe.Light.TweakScale=2.5.2|Scale=2.4.7|TweakScaleCompanion_Frameworks=0.4.0|TweakScalerTestFlightCore=0.4.0|Waterfall=0.0.0|TweakScalerWaterfallFX=0.4.0|TweakScaleCompanion_FS=1.3.0|TweakScalerFSBuoyancy=1.3.0|TweakScaleCompanion_KIAS=1.1.0|TweakScalerKISInventory=1.1.0|TweakScaleCompanion_PKMC=2.2.1|UniversalStorage2=4.0.1|UniversalStorage2.Unity=1.8.0|VaporVent=1.1.12|VesselMover=1.12.0|KerbalActuators=1.0.0
+PART
+{
+	part = SpaceXDroneship_4291922658
+	partName = Part
+	persistentId = 2535975533
+	pos = -0.264478773,13.9358673,1.69460416
+	attPos = 0,0,0
+	attPos0 = -0.264478773,13.9358673,1.69460416
+	rot = 0.707106829,0,0,0.707106829
+	attRot = 0.707106769,0,0,0.707106769
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 0
+	resPri = 0
+	dstg = 0
+	sidx = 0
+	sqor = 0
+	sepI = 0
+	attm = 0
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = aerocam_4287933508
+	attN = top,Null_0_0|0|-3.18919992_0|0|-1_0|0|-3.18919992_0|0|-1
+	attN = core,Null_0_0|24.1459999|-2.81110001_0|0|-1_0|24.1459999|-2.81110001_0|0|-1
+	attN = bottom01,Null_0_0|0|0_0|0|1_0|0|0_0|0|1
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		ResourcesEnableFlow
+		{
+			actionGroup = None
+			active = False
+			wasActiveBeforePartWasAdjusted = False
+		}
+		ResourcesDisableFlow
+		{
+			actionGroup = None
+			active = False
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutOff
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutRoot
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutHeaviest
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutGrandparent
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleDecouple
+		isEnabled = True
+		ejectionForcePercent = 100
+		isDecoupled = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			DecoupleAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FundsKeeper
+		isEnabled = True
+		OriginalCost = 500
+		OriginalResourcesCost = 0
+		OriginalModulesCost = 0
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = StealBackMyFunds
+		isEnabled = True
+		active = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = tjs_DecouplerLight
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = RSE_Coupler
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = AttachedOnEditor
+		isEnabled = True
+		active = True
+		originalPos = (-0.264478773, 13.9358673, 1.69460416)
+		originalRotation = (0.707106829, 0, 0, 0.707106829)
+		moduleVersion = 6
+		stagingEnabled = True
+		userReallyDeactivatedIt = False
+		originalAttachNodePos = (0.0, 0.0, -3.2)
+		originalAttachNodePos = (0.0, 24.1, -2.8)
+		originalAttachNodePos = (0.0, 0.0, 0.0)
+		originalAttachNodeSize = 3
+		originalAttachNodeSize = 3
+		originalAttachNodeSize = 3
+		originalAttachNodeOrientation = (0.0, 0.0, -1.0)
+		originalAttachNodeOrientation = (0.0, 0.0, -1.0)
+		originalAttachNodeOrientation = (0.0, 0.0, 1.0)
+		originalAttachNodeOffset = (0.0, 0.0, 0.0)
+		originalAttachNodeOffset = (0.0, 0.0, 0.0)
+		originalAttachNodeOffset = (0.0, 0.0, 0.0)
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = aerocam_4287933508
+	partName = Part
+	persistentId = 610504873
+	pos = -2.56633377,20.6566753,-14.9639883
+	attPos = 0,-9.53674316E-06,-0.27139473
+	attPos0 = -2.30185509,-16.6585751,-6.44940662
+	rot = 0.164480001,-6.93232138E-09,4.15728216E-08,-0.986380577
+	attRot = -4.70326373E-16,0.986380577,0.164479703,-8.72283846E-15
+	attRot0 = 0.813781202,2.44945308E-08,3.42983135E-08,-0.581171393
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 0
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = 0
+	attm = 1
+	sameVesselCollision = False
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,SpaceXDroneship_4291922658,Box001_010,0|0|0,0|-0.25|0,0|0|0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+		ToggleSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		SetSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		RemoveSameVesselInteraction
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		ResourcesEnableFlow
+		{
+			actionGroup = None
+			active = False
+			wasActiveBeforePartWasAdjusted = False
+		}
+		ResourcesDisableFlow
+		{
+			actionGroup = None
+			active = False
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutOff
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutRoot
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutHeaviest
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+		AutostrutGrandparent
+		{
+			actionGroup = None
+			wasActiveBeforePartWasAdjusted = False
+		}
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = MuMechModuleHullCameraZoom
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ZoomInAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			ZoomOutAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			ActivateCameraAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			DeactivateCameraAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			NextCameraAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+			PreviousCameraAction
+			{
+				actionGroup = None
+				wasActiveBeforePartWasAdjusted = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleCargoPart
+		isEnabled = True
+		beingAttached = False
+		beingSettled = False
+		reinitResourcesOnStoreInVessel = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FundsKeeper
+		isEnabled = True
+		OriginalCost = 100
+		OriginalResourcesCost = 0
+		OriginalModulesCost = 0
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = StealBackMyFunds
+		isEnabled = True
+		active = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FMRS_PM
+		isEnabled = True
+		stagingEnabled = True
+		MM_DYNAMIC = true
+		parent_vessel = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = KOSNameTag
+		isEnabled = True
+		nameTag = 
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = JSIExternalCameraSelector
+		isEnabled = True
+		current = 1
+		showCones = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ShipEffectsCollisions
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = AttachedOnEditor
+		isEnabled = True
+		active = True
+		originalPos = (-2.56633377, 20.6566753, -14.9639883)
+		originalRotation = (0.164480001, -6.93232138E-09, 4.15728216E-08, -0.986380577)
+		moduleVersion = 6
+		stagingEnabled = True
+		userReallyDeactivatedIt = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
