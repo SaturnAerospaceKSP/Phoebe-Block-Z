@@ -13,7 +13,7 @@
 - SCOMv3 Satellite Software (Basic Now)
   
 ### 1.4 (Upcoming)
-- Phoebe Heavy Landing Code
+- Phoebe Heavy Landing Code Complete
 - Calypso Refined Software
 - Rhea????
 
