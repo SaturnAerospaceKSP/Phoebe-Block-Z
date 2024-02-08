@@ -34,4 +34,4 @@ Also you will have to choose the correct vehicle configuration for the mission.
 If there are any errors please let @Quasy know in the [discord](https://discord.gg/bDEvPbTEyj).
 
 ### Credits
-Includes code from Edwinrobert, Marcus House & EVE.
+Includes code from Edwinrobert, ACR8133, Marcus House & EVE.
